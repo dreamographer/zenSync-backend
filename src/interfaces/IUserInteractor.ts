@@ -5,4 +5,5 @@ export interface IUserInteractor {
   registerUser(data: User): Promise<User>;
   findUserByEmail(email: string): Promise<User | null>;
   loginUser(email: string, password: string): Promise<string | null>;
-}
+  generateToken(userId: string): string;
+} 

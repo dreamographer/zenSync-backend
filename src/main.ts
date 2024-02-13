@@ -1,17 +1,22 @@
 import dotenv from 'dotenv';
 dotenv.config(); 
 import express from "express";
-import authRouter from "./presentation/routes/authRoutes";
 import { connectToDatabase } from "./database/connection";
 import cors from "cors";
+import session from "express-session";
+import passport from './external-libraries/passport-google-auth'
+import authRouter from "./presentation/routes/authRoutes";
+import cookieParser from 'cookie-parser'
 const app = express();     
 app.use(express.json());
-const port = process.env.PORT || 5000;  
-    
-const mongoUri = process.env.MONGO_URI;
-if (!mongoUri) {
-  throw new Error("Environment variable MONGO_URI is not set");
-}
+app.use(
+  session({
+    secret: "your_session_secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -19,6 +24,13 @@ app.use(
     exposedHeaders: ["set-cookie"],
   })
 );
+app.use(passport.initialize())
+const port = process.env.PORT || 5000;  
+    
+const mongoUri = process.env.MONGO_URI;
+if (!mongoUri) {
+  throw new Error("Environment variable MONGO_URI is not set");
+}
 connectToDatabase(mongoUri)
   .then(() => {  
     app.use("/auth", authRouter);

@@ -21,35 +21,47 @@ export class userInteractor implements IUserInteractor {
     this.bcrypt = bcrypt;
     this.token = token;
   }
+  generateToken(userId: string): string {
+      return this.token.generateToken(userId);
+  }
 
   findUserByEmail(email: string): Promise<User | null> {
     const user = this.repository.find(email);
     return user;
   }
   async registerUser(input: User) {
-    const hashedPassword = await this.bcrypt.Encrypt(input.password);
-    input.password = hashedPassword;
+    if (input.password) {
+      const hashedPassword = await this.bcrypt.Encrypt(input.password);
+      input.password = hashedPassword;
+      
+    }
     const data = await this.repository.create(input);
     this.mailer.SendEmail("ashwink", data);
     return data;
   }
 
   async loginUser(email: string, password: string): Promise<string | null> {
-    const user = await this.repository.find(email);
+    const user = await this.findUserByEmail(email);
     if (!user) {
       return null;
     }
-
-    const isPasswordCorrect = await this.bcrypt.compare(
-      password,
-      user.password
-    );
-
-    if (isPasswordCorrect && user.id !== undefined) {
-      const token = this.token.generateToken(user.id.toString());
-      return token;
-    } else {
-      return null;
+    if (user.password) {
+      const isPasswordCorrect = await this.bcrypt.compare(
+        password,
+        user.password
+        );
+        if (isPasswordCorrect && user.id !== undefined) {
+          const token = this.generateToken(user.id.toString());
+          return token;
+        } else {
+          return null;
+        }
+    }else{
+      return null
     }
+
   }
+
+
+  
 }
