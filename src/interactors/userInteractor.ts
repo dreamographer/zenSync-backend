@@ -4,7 +4,7 @@ import { IUserInteractor } from "../interfaces/IUserInteractor";
 import { IMailer } from "../interfaces/IMailer";
 import { IBcrypt } from "../interfaces/IBcrypt";
 import { IToken } from "../interfaces/IToken";
-
+import { v4 as uuidv4 } from "uuid";
 export class userInteractor implements IUserInteractor {
   private repository: IUserRepository;
   private mailer: IMailer;
@@ -26,21 +26,52 @@ export class userInteractor implements IUserInteractor {
   }
 
   findUserByEmail(email: string): Promise<User | null> {
-    const user = this.repository.find(email);
+    const user = this.repository.findByEmail(email);
     return user;
   }
-  async registerUser(input: User) {
+  findUserById(id: string): Promise<User | null> {
+    const user = this.repository.findById(id);
+    return user;
+  }
+  async verifyUser(email:string,token:string):Promise<User|null>{
+
+    const user=await this.findUserByEmail(email)
+    
+    if(user){
+      if (user.verify_token===token){
+        const data = {
+          verified: true,
+        };
+      const update=await this.repository.update(email,data)
+      if(update){
+        return update
+      }
+        
+      }
+
+    }
+    return null
+  }
+  async registerUser(input: User,type?:string) {
     if (input.password) {
       const hashedPassword = await this.bcrypt.Encrypt(input.password);
       input.password = hashedPassword;
       
     }
+    const token = uuidv4();
+    input.verify_token = token;
     const data = await this.repository.create(input);
-    this.mailer.SendEmail("ashwink", data);
-    return data;
+    if(type){
+      return data
+    }else{
+      const email=data.email
+      const html = `<a href=${process.env.SERVER_URL}/auth/verify-email?email=${email}&token=${token}>Verify</a>`;
+      this.mailer.SendEmail(email, html);
+      return data;
+    }
   }
 
-  async loginUser(email: string, password: string): Promise<string | null> {
+  async loginUser(email: string, password: string): Promise<User | null> {
     const user = await this.findUserByEmail(email);
     if (!user) {
       return null;
@@ -51,8 +82,7 @@ export class userInteractor implements IUserInteractor {
         user.password
         );
         if (isPasswordCorrect && user.id !== undefined) {
-          const token = this.generateToken(user.id.toString());
-          return token;
+          return user;
         } else {
           return null;
         }

@@ -1,3 +1,3 @@
-export interface IMailer{
-    SendEmail(to:String, product:unknown):any;
+export interface IMailer {
+  SendEmail(to: string,  data: any): any;
 }

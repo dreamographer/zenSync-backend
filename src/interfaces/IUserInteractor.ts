@@ -2,8 +2,10 @@ import { Types } from "mongoose";
 import { User } from "../entities/User";
 
 export interface IUserInteractor {
-  registerUser(data: User): Promise<User>;
+  registerUser(data: User,type?:string): Promise<User>;
+  loginUser(email: string, password: string): Promise<User | null>;
   findUserByEmail(email: string): Promise<User | null>;
-  loginUser(email: string, password: string): Promise<string | null>;
+  findUserById(email: string): Promise<User | null>;
   generateToken(userId: string): string;
+  verifyUser(email: string, token: string): Promise<User | null>;
 } 

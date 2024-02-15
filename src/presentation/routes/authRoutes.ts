@@ -18,7 +18,7 @@ const interactor = new userInteractor(repository, mailer, bcrypt, token);
 const controller = new userController(interactor);
 
 const router = express.Router();
-
+const CLIENT_URL = process.env.CLIENT_URL;
 
 router.post(
   "/signup",
@@ -26,13 +26,23 @@ router.post(
   controller.onRegisterUser.bind(controller)
 );
 router.post("/login", controller.onLoginUser.bind(controller));
+router.get("/logout", controller.onUserLogout.bind(controller));
+router.get("/verify-email", controller.onVerifyUser.bind(controller));
 router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
+router.get("/github", passport.authenticate("github", { scope: ["profile"] }));
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000/login",
+    failureRedirect: `${CLIENT_URL}/login`,
   }),
-  controller.handleGoogleCallback.bind(controller)
-  );
-  router.get('/home',validateToken,(req,res)=>res.json("WELCOM"))
+  controller.handlePassportCallback.bind(controller)
+);
+router.get(
+  "/github/callback",
+  passport.authenticate("github", {
+    failureRedirect: `${CLIENT_URL}/login`,
+  }),
+  controller.handlePassportCallback.bind(controller)
+);
+  router.get("/users/me",validateToken,controller.onUserFind.bind(controller));
 export default router;
