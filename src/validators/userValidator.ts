@@ -9,9 +9,9 @@ export const userSchema = z.object({
     .min(8, "Password must have at least 8 characters with alphanumber combination")
     .refine(password => /[A-Za-z][0-9]/.test(password), {
       message: "Password must contain at least one letter",
-    }),
+    })
 });
 
-export const validateUser = (data: unknown): User => {
+export const validateUser = (data: unknown): Partial<User> => {
   return userSchema.parse(data);
 };

@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { User } from "../entities/User";
 
 export interface IUserInteractor {
-  registerUser(data: User,type?:string): Promise<User>;
+  registerUser(data: Partial<User>, type?: string): Promise<User>;
   loginUser(email: string, password: string): Promise<User | null>;
   findUserByEmail(email: string): Promise<User | null>;
   findUserById(email: string): Promise<User | null>;

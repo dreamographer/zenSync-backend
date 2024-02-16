@@ -12,7 +12,7 @@ export class UserRepository implements IUserRepository {
         email: User.email,
         password: User.password,
         profile: User.profile || undefined,
-        verify_token: User.verify_token || undefined,
+        verify_token: User.verify_token ,
         verified: User.verified,
       };
       return userData;
@@ -28,7 +28,7 @@ export class UserRepository implements IUserRepository {
         email: User.email,
         password: User.password,
         profile: User.profile || undefined,
-        verify_token: User.verify_token || undefined,
+        verify_token: User.verify_token ,
         verified: User.verified,
       };
       return userData;
@@ -49,22 +49,34 @@ export class UserRepository implements IUserRepository {
         email: updatedUser.email,
         password: updatedUser.password,
         profile: updatedUser.profile || undefined,
-        verify_token: updatedUser.verify_token || undefined,
+        verify_token: updatedUser.verify_token,
         verified: updatedUser.verified,
       };
     }
     return null;
   }
+  async  deleteUnverifiedAccounts(): Promise<void>{
+    const fifteenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    // Assuming you have a User model with a verified field and a createdAt field
+    const unverifiedAccounts = await UserModel.find({
+      createdAt: { $lte: fifteenMinutesAgo },
+      verified: false,
+    });
 
+    for (const account of unverifiedAccounts) {
+      await UserModel.deleteOne({ _id: account._id });
+    }
+  }
   async create(data: User): Promise<User> {
     const newUserDocument = await UserModel.create(data);
+    setTimeout(this.deleteUnverifiedAccounts, 10 * 60 * 1000);
     const newUser: User = {
       id: newUserDocument._id.toString(),
       fullname: newUserDocument.fullname,
       email: newUserDocument.email,
       password: newUserDocument.password,
       profile: newUserDocument.profile || undefined,
-      verify_token: newUserDocument.verify_token || undefined,
+      verify_token: newUserDocument.verify_token ,
       verified: newUserDocument.verified,
     };
     return newUser;

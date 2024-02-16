@@ -1,9 +1,10 @@
 export interface User {
-  id?: string;
+  id: string;
   fullname: string;
   email: string;
   password: string;
   profile?: string;
-  verify_token?: string; 
-  verified?:boolean;
+  verify_token: string; 
+  verified:boolean;
 }
+//  update required

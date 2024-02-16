@@ -34,7 +34,7 @@ export class userController {
   }
   async onRegisterUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const body = req.body;
+      const {body} = req.body;
       const existingUser = await this.interactor.findUserByEmail(body.email);
       if (existingUser) {
         return res
@@ -106,8 +106,7 @@ export class userController {
       const { email, password } = req.body;
       
       const user = await this.interactor.loginUser(email, password);
-      console.log(user);
-      
+  
       if (user?.id) {
         const token =  this.interactor.generateToken(user.id)
       if (token) {
@@ -120,6 +119,8 @@ export class userController {
       } else {
         return res.status(401).json({ error: "Invalid credentials" });
       }
+    }else{
+        return res.status(401).json({ error: "Invalid credentials" });
     }
     } catch (error) {
       next(error);
@@ -139,10 +140,18 @@ export class userController {
 
   async onUserFind(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log("reques came");
       
       const userId=req.user as string
       const user=await this.interactor.findUserById(userId)
-      return res.json(user)
+      let data={
+        id:user?.id,
+        fullname:user?.fullname,
+        email:user?.email,
+        verified:user?.verified,
+        profile:user?.profile
+      }
+      return res.json(data);
     } catch (error) {
       console.log(error);
       

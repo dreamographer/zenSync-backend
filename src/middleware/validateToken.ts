@@ -8,18 +8,20 @@ export const validateToken=(
   res: Response,
   next: NextFunction
 ): void | Response=> { 
-  const authHeader = req.headers.authorization;
+  try {
+      const authHeader = req.headers.authorization;
+    
+      const token = authHeader?authHeader?.split(" ")[1]:req.cookies.jwt
+  console.log("token is ",token);
   
-  const token = authHeader?.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
   }
 
-  try {
     const decodedToken = tokenService.verifyToken(token);
     req.user = decodedToken.userId; 
     next(); 
   } catch (error) {
-    return res.status(403).json({ message: "Failed to authenticate token" });
+    return res.status(403).json({ message: "Failed to authenticate token sfsdf" });
   }
 }

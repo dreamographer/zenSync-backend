@@ -19,7 +19,6 @@ export class Mailer implements IMailer{
           subject: "OTP for verification",
           html: data,
         });
-            console.log(res)
 
         
         return true
