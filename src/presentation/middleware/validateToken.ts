@@ -1,5 +1,5 @@
 import { NextFunction, Response,Request } from "express";
-import { Token } from "../external-libraries/Token";
+import { Token } from "../../external-libraries/Token";
 
 const tokenService = new Token();
 //JWT Token Validation
@@ -19,9 +19,11 @@ export const validateToken=(
   }
 
     const decodedToken = tokenService.verifyToken(token);
+    
     req.user = decodedToken.userId; 
     next(); 
   } catch (error) {
-    return res.status(403).json({ message: "Failed to authenticate token sfsdf" });
+    
+    return res.status(403).json({ message: "Failed to authenticate token " });
   }
 }

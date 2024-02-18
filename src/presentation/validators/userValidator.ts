@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { User } from "../entities/User";
+import { User } from "../../entities/User";
 
 export const userSchema = z.object({ 
   fullname: z.string().min(2, "Full name must have at least 2 characters"),

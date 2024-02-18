@@ -1,47 +1,34 @@
 import { NextFunction, Request, Response } from "express";
-import { IUserInteractor } from "../../interfaces/IUserInteractor";
-import { userInteractor } from "../../interactors/userInteractor";
+import { IUserAuth } from "../../interfaces/IUserAuth";
+import { UserRepository } from "../../database/repository/UserRepository";
+import { authService } from "../../services/authService";
+import { Mailer } from "../../external-libraries/mailer";
+import { Bcrypt } from "../../external-libraries/bcrypt";
+import { Token } from "../../external-libraries/Token";
+import { IPassportUser } from "../../interfaces/IPassportUser";
 const CLIENT_URL = process.env.CLIENT_URL;
-interface UserProfile {
-  sub: string;
-  name: string;
-  given_name: string;
-  family_name: string;
-  picture: string;
-  email: string;
-  email_verified: boolean;
-  locale: string;
-}
 
-interface User {
-  id: string;
-  displayName: string;
-  name: {
-    familyName: string;
-    givenName: string;
-  };
-  emails: Array<{ value: string; verified: boolean }>;
-  photos: Array<{ value: string }>;
-  provider: string;
-  _raw: string;
-  _json: UserProfile;
-}
 
 export class userController {
-  private interactor: IUserInteractor;
-  constructor(interactor: IUserInteractor) {
-    this.interactor = interactor;
+  private authService: IUserAuth;
+
+  constructor() {
+    const repository = new UserRepository();
+    const mailer = new Mailer();
+    const bcrypt = new Bcrypt();
+    const token = new Token();
+    this.authService = new authService(repository, mailer, bcrypt, token);
   }
   async onRegisterUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const {body} = req.body;
-      const existingUser = await this.interactor.findUserByEmail(body.email);
+      const body = req.body;
+      const existingUser = await this.authService.findUserByEmail(body.email);
       if (existingUser) {
         return res
           .status(409)
           .json({ error: "User Already exits with given email" });
       }
-      const data = await this.interactor.registerUser(body);
+      const data = await this.authService.registerUser(body);
       return res.json(data);
     } catch (error) {
       next(error);
@@ -49,14 +36,14 @@ export class userController {
   }
 
   async handlePassportCallback(req: Request, res: Response) {
-  try {
+    try {
       if (req && req.user) {
-        const user = (req.user as User);
-        const email=user.emails[0].value
-        const existingUser = await this.interactor.findUserByEmail(email);
+        const user = req.user as IPassportUser;
+        const email = user.emails[0].value;
+        const existingUser = await this.authService.findUserByEmail(email);
         let token;
         if (existingUser && existingUser.id) {
-          token = this.interactor.generateToken(existingUser.id.toString());
+          token = this.authService.generateToken(existingUser.id.toString());
         } else {
           const data = {
             fullname: user.displayName,
@@ -64,9 +51,9 @@ export class userController {
             profile: user.photos[0].value,
             password: user.id,
           };
-          const resp = await this.interactor.registerUser(data, "Google");
+          const resp = await this.authService.registerUser(data, "Google");
           if (resp && resp.id) {
-            token = this.interactor.generateToken(resp.id.toString());
+            token = this.authService.generateToken(resp.id.toString());
           }
         }
         if (token) {
@@ -75,55 +62,53 @@ export class userController {
             secure: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
-          
+
           return res.redirect(`${CLIENT_URL}/dashboard`);
         }
       }
-  } catch (error) {
-    console.log(error);
-    
-  }
- 
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async onVerifyUser(req: Request, res: Response, next: NextFunction) {
-   try {
+    try {
       const token = req.query.token as string;
       const email = req.query.email as string;
-      const result = await this.interactor.verifyUser(email, token);
+      const result = await this.authService.verifyUser(email, token);
       if (result) {
         res.redirect(`${CLIENT_URL}/verify-email?token=${token}`);
       } else {
         const error = "Invalid token";
         res.redirect(`${CLIENT_URL}/verify-email?error=${error}`);
       }
-   } catch (error) {
-    
-   }
+    } catch (error) {
+      console.log(error);
+    }
   }
   async onLoginUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      
-      const user = await this.interactor.loginUser(email, password);
-  
+
+      const user = await this.authService.loginUser(email, password);
+
       if (user?.id) {
-        const token =  this.interactor.generateToken(user.id)
-      if (token) {
-        res.cookie("jwt", token, {
-          httpOnly: true,
-          secure: true,
-          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        });
-        return res.status(200).json({ message: "Sign-in successful",user });
+        const token = this.authService.generateToken(user.id);
+        if (token) {
+          res.cookie("jwt", token, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+          });
+          return res.status(200).json({ message: "Sign-in successful", user });
+        } else {
+          return res.status(401).json({ error: "Invalid credentials" });
+        }
       } else {
         return res.status(401).json({ error: "Invalid credentials" });
       }
-    }else{
-        return res.status(401).json({ error: "Invalid credentials" });
-    }
     } catch (error) {
-      next(error);
+      console.log(error);
     }
   }
   async onUserLogout(req: Request, res: Response, next: NextFunction) {
@@ -132,7 +117,7 @@ export class userController {
         httpOnly: true,
         expires: new Date(0),
       });
-    return  res.status(200).json({ message: "Logged out successfully" });
+      return res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
       console.log(error);
     }
@@ -141,21 +126,19 @@ export class userController {
   async onUserFind(req: Request, res: Response, next: NextFunction) {
     try {
       console.log("reques came");
-      
-      const userId=req.user as string
-      const user=await this.interactor.findUserById(userId)
-      let data={
-        id:user?.id,
-        fullname:user?.fullname,
-        email:user?.email,
-        verified:user?.verified,
-        profile:user?.profile
-      }
+
+      const userId = req.user as string;
+      const user = await this.authService.findUserById(userId);
+      let data = {
+        id: user?.id,
+        fullname: user?.fullname,
+        email: user?.email,
+        verified: user?.verified,
+        profile: user?.profile,
+      };
       return res.json(data);
     } catch (error) {
       console.log(error);
-      
     }
-    
   }
 }
