@@ -57,7 +57,6 @@ export class UserRepository implements IUserRepository {
   }
   async  deleteUnverifiedAccounts(): Promise<void>{
     const fifteenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-    // Assuming you have a User model with a verified field and a createdAt field
     const unverifiedAccounts = await UserModel.find({
       createdAt: { $lte: fifteenMinutesAgo },
       verified: false,
