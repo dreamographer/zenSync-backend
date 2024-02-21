@@ -10,6 +10,22 @@ export class WorkspaceController {
     this.workspaceService = workspaceService;
   }
 
+  async onFindUserWorkspace(req: Request, res: Response, next: NextFunction) {
+    try {
+      const workspace = await this.workspaceService.findWorkspaceByUser(
+        req.user as string
+      );
+      if (workspace) {
+        console.log("Thw workspaces",workspace);
+        
+        return res.status(200).json(workspace);
+      } else {
+        return res.status(404).json({ error: "Workspace not found" });
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
   async onFindWorkspace(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;

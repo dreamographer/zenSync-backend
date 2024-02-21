@@ -10,6 +10,9 @@ export class WorkspaceService implements IWorkspaceService {
   async findWorkspaceById(id: string): Promise<Workspace | null> {
     return await this.workspaceRepository.findById(id);
   }
+  async findWorkspaceByUser(id: string): Promise<Workspace[] | null> {
+    return await this.workspaceRepository.findAllByUser(id);
+  }
 
   async createWorkspace(
     workspaceData: Partial<Workspace>

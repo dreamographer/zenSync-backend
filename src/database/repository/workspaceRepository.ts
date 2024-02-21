@@ -55,9 +55,28 @@ export class WorkspaceRepository implements IWorkspaceRepository {
     return null;
   }
 
-
   // find workspace by title
-  async findByTitle(title: string,owner:string): Promise<Workspace | null> {
+  async findAllByUser(owner: string): Promise<Workspace[] | null> {
+    const workspaces = await WorkspaceModel.find({
+      workspaceOwner: owner,
+    });
+
+    if (workspaces && workspaces.length > 0) {
+      const workspaceData: Workspace[] = workspaces.map(workspace => ({
+        id: workspace._id.toString(),
+        workspaceOwner: workspace.workspaceOwner.toString(),
+        title: workspace.title,
+        collaborators: workspace.collaborators.map((collaborator: any) =>
+          collaborator.toString()
+        ),
+        workspaceType: workspace.workspaceType,
+      }));
+      return workspaceData;
+    }
+    return null;
+  }
+  // find workspace by title
+  async findByTitle(title: string, owner: string): Promise<Workspace | null> {
     const workspace = await WorkspaceModel.findOne({
       title: title,
       workspaceOwner: owner,

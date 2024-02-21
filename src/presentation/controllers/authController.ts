@@ -54,7 +54,7 @@ export class authController {
             secure: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
-
+          
           return res.redirect(`${CLIENT_URL}/dashboard`);
         }
       }
@@ -117,10 +117,10 @@ export class authController {
 
   async onUserFind(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log("reques came");
-
+      
       const userId = req.user as string;
       const user = await this.authService.findUserById(userId);
+      
       let data = {
         id: user?.id,
         fullname: user?.fullname,

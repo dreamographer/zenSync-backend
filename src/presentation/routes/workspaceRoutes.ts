@@ -19,6 +19,12 @@ router.post(
   workspaceController.onCreateWorkspace.bind(workspaceController)
 );
 
+// find Workspace by Id
+router.get(
+  "/",
+  workspaceController.onFindUserWorkspace.bind(workspaceController)
+);
+
 // Update an existing workspace
 router.put(
   "/:id",
