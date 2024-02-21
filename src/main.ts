@@ -7,6 +7,8 @@ import session from "express-session";
 import passport from './external-libraries/passport-google-auth'
 import authRouter from "./presentation/routes/authRoutes";
 import cookieParser from 'cookie-parser'
+import workspaceRouter from './presentation/routes/workspaceRoutes'
+import { errorHandler } from './presentation/middleware/errorHandler';
 const app = express();     
 app.use(express.json());
 app.use(
@@ -35,7 +37,8 @@ if (!mongoUri) {
 connectToDatabase(mongoUri)
   .then(() => {  
     app.use("/auth", authRouter);
-
+    app.use("/workspace", workspaceRouter);
+    app.use(errorHandler)
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });

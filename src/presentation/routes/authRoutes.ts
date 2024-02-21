@@ -1,13 +1,20 @@
 import express from "express";
 import { validateRequest } from "../middleware/validateRequest";
-import {validateToken} from "../middleware/validateToken"
+import { validateToken } from "../middleware/validateToken";
 import { userSchema } from "../validators/userValidator";
-import { userController } from "../controllers/userController";
-
+import { authController } from "../controllers/authController";
+import { UserRepository } from "../../database/repository/UserRepository";
+import { authService } from "../../services/authService";
+import { Mailer } from "../../external-libraries/mailer";
+import { Bcrypt } from "../../external-libraries/bcrypt";
+import { Token } from "../../external-libraries/Token";
 import passport from "passport";
-
-const controller = new userController();
-
+const repository = new UserRepository();
+const mailer = new Mailer();
+const bcrypt = new Bcrypt();
+const token = new Token();
+const auth = new authService(repository, mailer, bcrypt, token);
+const controller = new authController(auth);
 const router = express.Router();
 const CLIENT_URL = process.env.CLIENT_URL;
 
@@ -35,5 +42,5 @@ router.get(
   }),
   controller.handlePassportCallback.bind(controller)
 );
-  router.get("/users/me",validateToken,controller.onUserFind.bind(controller));
+router.get("/users/me", validateToken, controller.onUserFind.bind(controller));
 export default router;

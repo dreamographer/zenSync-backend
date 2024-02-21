@@ -7,4 +7,3 @@ export interface User {
   verify_token: string; 
   verified:boolean;
 }
-//  update required

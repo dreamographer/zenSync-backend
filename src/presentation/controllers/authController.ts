@@ -1,23 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserAuth } from "../../interfaces/IUserAuth";
-import { UserRepository } from "../../database/repository/UserRepository";
-import { authService } from "../../services/authService";
-import { Mailer } from "../../external-libraries/mailer";
-import { Bcrypt } from "../../external-libraries/bcrypt";
-import { Token } from "../../external-libraries/Token";
 import { IPassportUser } from "../../interfaces/IPassportUser";
 const CLIENT_URL = process.env.CLIENT_URL;
 
 
-export class userController {
+export class authController {
   private authService: IUserAuth;
 
-  constructor() {
-    const repository = new UserRepository();
-    const mailer = new Mailer();
-    const bcrypt = new Bcrypt();
-    const token = new Token();
-    this.authService = new authService(repository, mailer, bcrypt, token);
+  constructor(authService: IUserAuth) {
+    
+    this.authService = authService;
   }
   async onRegisterUser(req: Request, res: Response, next: NextFunction) {
     try {
@@ -98,7 +90,7 @@ export class userController {
           res.cookie("jwt", token, {
             httpOnly: true,
             secure: true,
-            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            maxAge: 24 * 60 * 60 * 1000,
           });
           return res.status(200).json({ message: "Sign-in successful", user });
         } else {
