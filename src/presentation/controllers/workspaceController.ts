@@ -16,8 +16,6 @@ export class WorkspaceController {
         req.user as string
       );
       if (workspace) {
-        console.log("Thw workspaces",workspace);
-        
         return res.status(200).json(workspace);
       } else {
         return res.status(404).json({ error: "Workspace not found" });
@@ -44,10 +42,10 @@ export class WorkspaceController {
     try {
 
       const workspaceData ={ ...req.body,'workspaceOwner':req.user};
-      console.log("This is the workspace Data",workspaceData)
       const createdWorkspace = await this.workspaceService.createWorkspace(
         workspaceData
       );
+
       return res.status(201).json(createdWorkspace);
     } catch (error) {
       next(error);

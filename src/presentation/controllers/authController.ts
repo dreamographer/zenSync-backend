@@ -81,7 +81,8 @@ export class authController {
   async onLoginUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-
+      console.log("jdfd");
+      
       const user = await this.authService.loginUser(email, password);
 
       if (user?.id) {
