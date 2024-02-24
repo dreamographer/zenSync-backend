@@ -11,7 +11,3 @@ export const userSchema = z.object({
       message: "Password must contain at least one letter",
     })
 });
-
-export const validateUser = (data: unknown): Partial<User> => {
-  return userSchema.parse(data);
-};

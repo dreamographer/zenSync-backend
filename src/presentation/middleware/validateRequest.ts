@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { RequestHandler } from "express";
-import { validateUser } from "../validators/userValidator";
 
 export const validateRequest =
   (schema: z.ZodSchema<any>): RequestHandler =>

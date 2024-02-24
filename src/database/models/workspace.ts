@@ -1,14 +1,21 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
-const WorkspaceSchema = new mongoose.Schema(
+export interface WorkspaceDocument extends Document {
+  workspaceOwner: Schema.Types.ObjectId;
+  title: string;
+  collaborators: Schema.Types.ObjectId[];
+  workspaceType: "Private" | "Collaborative";
+}
+
+const WorkspaceSchema = new Schema<WorkspaceDocument>(
   {
     workspaceOwner: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     title: { type: String, required: true },
-    collaborators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    collaborators: [{ type: Schema.Types.ObjectId, ref: "User" }],
     workspaceType: {
       type: String,
       enum: ["Private", "Collaborative"],
@@ -19,4 +26,5 @@ const WorkspaceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const Workspace = mongoose.model("Workspace", WorkspaceSchema);
+export const Workspace: Model<WorkspaceDocument> =
+  mongoose.model<WorkspaceDocument>("Workspace", WorkspaceSchema);

@@ -11,7 +11,7 @@ const workspaceService = new WorkspaceService(workspaceRepository);
 const workspaceController = new WorkspaceController(workspaceService);
 
 router.use(validateToken);
-
+ 
 // Create a new workspace
 router.post(
   "/",

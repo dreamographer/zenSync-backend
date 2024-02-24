@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IWorkspaceService } from "../../interfaces/IWorkspaceService";
 
-const CLIENT_URL = process.env.CLIENT_URL;
 
 export class WorkspaceController {
   private workspaceService: IWorkspaceService;

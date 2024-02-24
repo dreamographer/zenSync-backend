@@ -42,6 +42,7 @@ export class authController {
             email: email,
             profile: user.photos[0].value,
             password: user.id,
+            verified: true,
           };
           const resp = await this.authService.registerUser(data, "Google");
           if (resp && resp.id) {
@@ -118,10 +119,10 @@ export class authController {
 
   async onUserFind(req: Request, res: Response, next: NextFunction) {
     try {
-      
       const userId = req.user as string;
       const user = await this.authService.findUserById(userId);
-      
+        console.log("the user");
+        
       let data = {
         id: user?.id,
         fullname: user?.fullname,
