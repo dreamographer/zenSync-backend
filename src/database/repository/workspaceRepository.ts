@@ -3,6 +3,20 @@ import { IWorkspaceRepository } from "../../interfaces/IWorkspaceRepository";
 import { Workspace as WorkspaceModel } from "../models/workspace";
 
 export class WorkspaceRepository implements IWorkspaceRepository {
+
+  // Validate workspace with user
+  async checkWorkspaceOwnership(
+    userId: string,
+    workspaceId: string
+  ): Promise<boolean> {
+    const workspace = await WorkspaceModel.findOne({
+      _id: workspaceId,
+      workspaceOwner: userId,
+    });
+    return !!workspace;
+  }
+
+
   // add new collaborator to the workspace
   async addCollaborator(workspaceId: string, userId: string): Promise<boolean> {
     try {
@@ -48,7 +62,7 @@ export class WorkspaceRepository implements IWorkspaceRepository {
           collaborator.toString()
         ),
         workspaceType: workspace.workspaceType,
-        // Include other fields as needed
+      
       };
       return workspaceData;
     }
@@ -108,7 +122,6 @@ export class WorkspaceRepository implements IWorkspaceRepository {
           collaborator.toString()
         ),
         workspaceType: newWorkspace.workspaceType,
-        // Include other fields as needed
       };
     }
     return null;
@@ -130,7 +143,7 @@ export class WorkspaceRepository implements IWorkspaceRepository {
           collaborator.toString()
         ),
         workspaceType: updatedWorkspace.workspaceType,
-        // Include other fields as needed
+        
       };
     }
     return null;

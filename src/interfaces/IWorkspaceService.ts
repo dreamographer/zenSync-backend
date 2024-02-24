@@ -1,6 +1,7 @@
 import { Workspace } from "../entities/Workspace";
 
 export interface IWorkspaceService {
+  checkWorkspaceOwnership(userId: string, workspaceId: string): Promise<boolean> ;
   findWorkspaceById(id: string): Promise<Workspace | null>;
   createWorkspace(workspaceData: any): Promise<Workspace | null>;
   findWorkspaceByUser(id: string): Promise<Workspace[] | null>;

@@ -2,37 +2,60 @@ import { IFolderRepository } from "../../interfaces/IFolderRepository";
 import { Folder } from "../../entities/Folder";
 import { Folder as folderModel} from "../models/Folder";
 export class FolderRepository implements IFolderRepository {
-  async findAllByWorkspaceId(userId: string): Promise<Folder[]> {
-    // Implementation to find all folders by user ID from the database
-    // Example: return database.findFoldersByUserId(userId);
-    throw new Error("Method not implemented");
+
+  // get folder data with workspace Id
+  async findAllByWorkspaceId(workspaceId: string): Promise<Folder[]> {
+    const folders = await folderModel.find({ workspaceId: workspaceId });
+     console.log(folders);
+     
+    return folders.map(folder => ({
+      id: folder.id,
+      title: folder.title,
+      in_trash: folder.inTrash,
+      workspaceId: folder.workspaceId.toString(),
+    }));
   }
 
   async findById(folderId: string): Promise<Folder | null> {
-    // Implementation to find a folder by its ID from the database
-    // Example: return database.findFolderById(folderId);
-    throw new Error("Method not implemented");
+    const folder = await folderModel.findById(folderId);
+    if (!folder) return null;
+    return {
+      id: folder.id,
+      title: folder.title,
+      in_trash: folder.inTrash,
+      workspaceId: folder.workspaceId.toString(),
+    };
   }
 
   async create(userId: string, folderData: Partial<Folder>): Promise<Folder> {
     const Folder = await folderModel.create(folderData);
-    console.log(Folder)
-    
-    throw new Error("Method not implemented");
+    return {
+      id: Folder.id,
+      title: Folder.title,
+      in_trash: Folder.inTrash,
+      workspaceId: Folder.workspaceId.toString(),
+    };
   }
 
   async update(
     folderId: string,
     folderData: Partial<Folder>
   ): Promise<Folder | null> {
-    // Implementation to update an existing folder in the database
-    // Example: return database.updateFolder(folderId, folderData);
-    throw new Error("Method not implemented");
+    const updatedFolder = await folderModel.findByIdAndUpdate(
+      folderId,
+      folderData,
+      { new: true }
+    );
+    if (!updatedFolder) return null;
+    return {
+      id: updatedFolder.id,
+      title: updatedFolder.title,
+      in_trash: updatedFolder.inTrash,
+      workspaceId: updatedFolder.workspaceId.toString(),
+    };
   }
 
   async delete(folderId: string): Promise<void> {
-    // Implementation to delete a folder from the database
-    // Example: return database.deleteFolder(folderId);
-    throw new Error("Method not implemented");
+    await folderModel.findByIdAndDelete(folderId);
   }
 }

@@ -1,6 +1,10 @@
 import { Workspace } from "../entities/Workspace";
 
 export interface IWorkspaceRepository {
+  checkWorkspaceOwnership(
+    userId: string,
+    workspaceId: string
+  ): Promise<boolean>;
   findById(id: string): Promise<Workspace | null>;
   findByTitle(title: string, owner: string): Promise<Workspace | null>;
   create(workspaceData: any): Promise<Workspace | null>;

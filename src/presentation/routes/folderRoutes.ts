@@ -5,18 +5,25 @@ import { FolderService } from "../../services/folderService";
 import { FolderRepository } from "../../database/repository/folderRepository";
 import { validateToken } from "../middleware/validateToken"; 
 import { folderSchema } from "../validators/folderValidator";
+import { WorkspaceService } from "../../services/workspaceService";
+import { WorkspaceRepository } from "../../database/repository/workspaceRepository";
 const router = express.Router();
 const folderRepository = new FolderRepository();
-const folderService = new FolderService(folderRepository);
+const workspaceRepository = new WorkspaceRepository();
+const workspaceService = new WorkspaceService(workspaceRepository);
+const folderService = new FolderService(folderRepository, workspaceService);
 const folderController = new FolderController(folderService);
 
 router.use(validateToken);
 
 // Get all folders for a user
-router.get("/", folderController.getAllFolders.bind(folderController));
+router.get(
+  "/:workspaceId",
+  folderController.getAllFolders.bind(folderController)
+);
 
-// Get a specific folder by ID
-router.get("/:id", folderController.getFolderById.bind(folderController));
+// // Get a specific folder by ID
+// router.get("/:id", folderController.getFolderById.bind(folderController));
 
 // Create a new folder
 router.post(

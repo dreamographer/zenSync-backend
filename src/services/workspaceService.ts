@@ -7,6 +7,15 @@ export class WorkspaceService implements IWorkspaceService {
   constructor(workspaceRepository: IWorkspaceRepository) {
     this.workspaceRepository = workspaceRepository;
   }
+  
+  async checkWorkspaceOwnership(
+    userId: string,
+    workspaceId: string
+  ): Promise<boolean> {
+    return await this.workspaceRepository.checkWorkspaceOwnership(userId, workspaceId);
+  }
+
+  
   async findWorkspaceById(id: string): Promise<Workspace | null> {
     return await this.workspaceRepository.findById(id);
   }
@@ -22,7 +31,7 @@ export class WorkspaceService implements IWorkspaceService {
       workspaceData.workspaceOwner as string
     );
     if (existingWorkspace) {
-        throw new Error("Title already exists");
+      throw new Error("Title already exists");
     }
     return await this.workspaceRepository.create(workspaceData);
   }

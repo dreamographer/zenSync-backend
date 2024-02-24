@@ -10,8 +10,8 @@ export class FolderController {
 
   async getAllFolders(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = req.user as string;
-      const folders = await this.folderService.getAllFolders(userId);
+      const folderId = req.params.workspaceId;
+      const folders = await this.folderService.getAllFolders(folderId);
       res.json(folders);
     } catch (error) {
       next(error);
