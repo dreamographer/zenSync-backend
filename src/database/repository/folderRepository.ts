@@ -6,7 +6,8 @@ export class FolderRepository implements IFolderRepository {
   // get folder data with workspace Id
   async findAllByWorkspaceId(workspaceId: string): Promise<Folder[]> {
     const folders = await folderModel.find({ workspaceId: workspaceId });
-     console.log(folders);
+  
+     console.log("folder find req");
      
     return folders.map(folder => ({
       id: folder.id,

@@ -9,6 +9,7 @@ import authRouter from "./presentation/routes/authRoutes";
 import cookieParser from 'cookie-parser'
 import workspaceRouter from './presentation/routes/workspaceRoutes'
 import folderRouter from "./presentation/routes/folderRoutes";
+import fileRouter from "./presentation/routes/fileRouter";
 import { errorHandler } from './presentation/middleware/errorHandler';
 const app = express();     
 app.use(express.json());
@@ -40,6 +41,7 @@ connectToDatabase(mongoUri)
     app.use("/auth", authRouter);
     app.use("/workspace", workspaceRouter);
     app.use("/folder", folderRouter);
+    app.use("/file", fileRouter);
     app.use(errorHandler)
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
