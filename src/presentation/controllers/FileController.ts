@@ -1,17 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { IFileService } from "../../interfaces/IFileService";
 
-export class fileController {
+export class FileController {
   private fileService: IFileService;
 
   constructor(fileService: IFileService) {
     this.fileService = fileService;
   }
-
+  
   async createFile(req: Request, res: Response, next: NextFunction) {
     try {
-      const { title, folderId } = req.body;
-      const newFile = await this.fileService.createFile(title, folderId);
+      const fileData = req.body
+      const userId=req.user as string
+      const newFile = await this.fileService.createFile(userId, fileData);
       res.status(201).json(newFile);
     } catch (error) {
       next(error);

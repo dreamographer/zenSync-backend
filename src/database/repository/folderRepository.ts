@@ -28,7 +28,7 @@ export class FolderRepository implements IFolderRepository {
     };
   }
 
-  async create(userId: string, folderData: Partial<Folder>): Promise<Folder> {
+  async create(folderData: Partial<Folder>): Promise<Folder> {
     const Folder = await folderModel.create(folderData);
     return {
       id: Folder.id,

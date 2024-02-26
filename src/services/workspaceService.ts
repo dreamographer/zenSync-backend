@@ -47,8 +47,12 @@ export class WorkspaceService implements IWorkspaceService {
     return await this.workspaceRepository.delete(id);
   }
 
-  async addCollaborator(workspaceId: string, userId: string): Promise<boolean> {
-    return await this.workspaceRepository.addCollaborator(workspaceId, userId);
+  async addCollaborator(workspaceId: string, collaborators: string[]): Promise<boolean> {
+
+    return await this.workspaceRepository.addCollaborator(
+      workspaceId,
+      collaborators
+    );
   }
 
   async removeCollaborator(

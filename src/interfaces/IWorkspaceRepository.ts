@@ -11,6 +11,6 @@ export interface IWorkspaceRepository {
   update(id: string, data: any): Promise<Workspace | null>;
   delete(id: string): Promise<boolean>;
   findAllByUser(owner: string): Promise<Workspace[] | null>;
-  addCollaborator(workspaceId: string, userId: string): Promise<boolean>;
+  addCollaborator(workspaceId: string, collaborators: string[]): Promise<boolean>;
   removeCollaborator(workspaceId: string, userId: string): Promise<boolean>;
 }

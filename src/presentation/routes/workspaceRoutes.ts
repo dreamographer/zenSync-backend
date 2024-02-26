@@ -40,7 +40,7 @@ router.delete(
 
 // Add a collaborator to a workspace
 router.post(
-  "/:id/collaborators",
+  "/collaborators/:workspaceId",
   workspaceController.onAddCollaborator.bind(workspaceController)
 );
 

@@ -14,6 +14,7 @@ export class FolderService implements IFolderService {
     this.workspaceService = workspaceService;
   }
 async getFolderById(folderId: string): Promise<Folder | null> {
+  
     return this.folderRepository.findById(folderId);
   }
   
@@ -25,7 +26,7 @@ async getFolderById(folderId: string): Promise<Folder | null> {
       if(!validWorkspace){
         throw new Error("Workspace Invalid");
       }
-      return this.folderRepository.create(userId, folderData);
+      return this.folderRepository.create(folderData);
     }
 
     // get all folders of workspace

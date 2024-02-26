@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { IWorkspaceService } from "../../interfaces/IWorkspaceService";
+import { User } from "../../entities/User";
 
 
 export class WorkspaceController {
@@ -39,7 +40,6 @@ export class WorkspaceController {
 
   async onCreateWorkspace(req: Request, res: Response, next: NextFunction) {
     try {
-
       const workspaceData ={ ...req.body,'workspaceOwner':req.user};
       const createdWorkspace = await this.workspaceService.createWorkspace(
         workspaceData
@@ -85,10 +85,13 @@ export class WorkspaceController {
 
   async onAddCollaborator(req: Request, res: Response, next: NextFunction) {
     try {
-      const { workspaceId, userId } = req.params;
+      const { workspaceId } = req.params;
+      const {collaborators}=req.body 
+      console.log('collaborators --- ',collaborators);
+      
       const added = await this.workspaceService.addCollaborator(
         workspaceId,
-        userId
+        collaborators  as string[]
       );
       if (added) {
         return res

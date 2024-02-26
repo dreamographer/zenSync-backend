@@ -18,11 +18,11 @@ export class WorkspaceRepository implements IWorkspaceRepository {
 
 
   // add new collaborator to the workspace
-  async addCollaborator(workspaceId: string, userId: string): Promise<boolean> {
+  async addCollaborator(workspaceId: string, collaborators: string[]): Promise<boolean> {
     try {
       const updatedWorkspace = await WorkspaceModel.findByIdAndUpdate(
         workspaceId,
-        { $addToSet: { collaborators: userId } },
+        { $addToSet: { collaborators: [...collaborators] } },
         { new: true }
       );
       return !!updatedWorkspace;
@@ -111,7 +111,7 @@ export class WorkspaceRepository implements IWorkspaceRepository {
   }
 
   //   create new workspace
-  async create(workspaceData: any): Promise<Workspace | null> {
+  async create(workspaceData: Partial<Workspace>): Promise<Workspace | null> {
     const newWorkspace = await WorkspaceModel.create(workspaceData);
     if (newWorkspace) {
       return {

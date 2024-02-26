@@ -14,4 +14,4 @@ const FileSchema = new Schema(
 );
 
 //Create and export the mongoose model for the Folder
-export const File = mongoose.model("Folder", FileSchema);
+export const File = mongoose.model("File", FileSchema);
