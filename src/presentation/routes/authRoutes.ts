@@ -4,7 +4,7 @@ import { validateToken } from "../middleware/validateToken";
 import { userSchema } from "../validators/userValidator";
 import { authController } from "../controllers/authController";
 import { UserRepository } from "../../database/repository/UserRepository";
-import { authService } from "../../services/authService";
+import { authService } from "../../services/userService";
 import { Mailer } from "../../external-libraries/mailer";
 import { Bcrypt } from "../../external-libraries/bcrypt";
 import { Token } from "../../external-libraries/Token";
@@ -35,6 +35,7 @@ router.get(
   }),
   controller.handlePassportCallback.bind(controller)
 );
+
 router.get(
   "/github/callback",
   passport.authenticate("github", {
@@ -42,5 +43,13 @@ router.get(
   }),
   controller.handlePassportCallback.bind(controller)
 );
+
 router.get("/users/me", validateToken, controller.onUserFind.bind(controller));
+
+router.get(
+  "/search",
+  validateToken,
+  controller.getUsersFromSearch.bind(controller)
+);
+
 export default router;

@@ -87,7 +87,6 @@ export class WorkspaceController {
     try {
       const { workspaceId } = req.params;
       const {collaborators}=req.body 
-      console.log('collaborators --- ',collaborators);
       
       const added = await this.workspaceService.addCollaborator(
         workspaceId,

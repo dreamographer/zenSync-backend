@@ -8,7 +8,6 @@ export class authController {
   private authService: IUserAuth;
 
   constructor(authService: IUserAuth) {
-    
     this.authService = authService;
   }
   async onRegisterUser(req: Request, res: Response, next: NextFunction) {
@@ -55,7 +54,7 @@ export class authController {
             secure: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
-          
+
           return res.redirect(`${CLIENT_URL}/dashboard`);
         }
       }
@@ -83,7 +82,7 @@ export class authController {
     try {
       const { email, password } = req.body;
       console.log("jdfd");
-      
+
       const user = await this.authService.loginUser(email, password);
 
       if (user?.id) {
@@ -121,8 +120,8 @@ export class authController {
     try {
       const userId = req.user as string;
       const user = await this.authService.findUserById(userId);
-        console.log("the user");
-        
+      console.log("the user");
+
       let data = {
         id: user?.id,
         fullname: user?.fullname,
@@ -133,6 +132,19 @@ export class authController {
       return res.json(data);
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async getUsersFromSearch(req: Request, res: Response): Promise<void> {
+    try {
+      const { email } = req.query;
+      console.log(email);
+      
+      const users = await this.authService.getUsersFromSearch(email as string);
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 }

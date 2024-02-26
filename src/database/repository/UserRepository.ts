@@ -4,21 +4,32 @@ import { User as UserModel} from "../models/User";
 
 export class UserRepository implements IUserRepository {
   async findById(id: string): Promise<User | null> {
-    const User = await UserModel.findOne({ _id: id });  //!!update to send only requred data 
-    if (User) {   
+    const User = await UserModel.findOne({ _id: id }); //!!update to send only requred data
+    if (User) {
       const userData: User = {
-        id: User._id.toString(), 
+        id: User._id.toString(),
         fullname: User.fullname,
         email: User.email,
         password: User.password,
         profile: User.profile || undefined,
-        verify_token: User.verify_token ,
+        verify_token: User.verify_token,
         verified: User.verified,
       };
       return userData;
     }
     return null;
   }
+
+  async getUsersFromSearch(email: string): Promise<any[]> {
+    if (!email) return [];
+    const accounts = await UserModel.find({
+      email: { $regex: `^${email}`, $options: "i" },
+    });
+    return accounts;
+  }
+
+
+
   async findByEmail(email: string): Promise<User | null> {
     const User = await UserModel.findOne({ email: email });
     if (User) {
@@ -28,7 +39,7 @@ export class UserRepository implements IUserRepository {
         email: User.email,
         password: User.password,
         profile: User.profile || undefined,
-        verify_token: User.verify_token ,
+        verify_token: User.verify_token,
         verified: User.verified,
       };
       return userData;
@@ -55,7 +66,7 @@ export class UserRepository implements IUserRepository {
     }
     return null;
   }
-  async  deleteUnverifiedAccounts(): Promise<void>{
+  async deleteUnverifiedAccounts(): Promise<void> {
     const fifteenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
     const unverifiedAccounts = await UserModel.find({
       createdAt: { $lte: fifteenMinutesAgo },
@@ -75,7 +86,7 @@ export class UserRepository implements IUserRepository {
       email: newUserDocument.email,
       password: newUserDocument.password,
       profile: newUserDocument.profile || undefined,
-      verify_token: newUserDocument.verify_token ,
+      verify_token: newUserDocument.verify_token,
       verified: newUserDocument.verified,
     };
     return newUser;

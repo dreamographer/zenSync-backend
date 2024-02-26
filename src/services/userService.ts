@@ -25,6 +25,10 @@ export class authService implements IUserAuth {
     return this.token.generateToken(userId);
   }
 
+  async getUsersFromSearch(email: string): Promise<any[]> {
+    return this.repository.getUsersFromSearch(email);
+  }
+
   findUserByEmail(email: string): Promise<User | null> {
     const user = this.repository.findByEmail(email);
     return user;
