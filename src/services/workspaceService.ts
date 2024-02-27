@@ -1,3 +1,4 @@
+import { User } from "../entities/User";
 import { Workspace } from "../entities/Workspace";
 import { IUserRepository } from "../interfaces/IUserRepository";
 import { IWorkspaceRepository } from "../interfaces/IWorkspaceRepository";
@@ -7,15 +8,17 @@ export class WorkspaceService implements IWorkspaceService {
   constructor(workspaceRepository: IWorkspaceRepository) {
     this.workspaceRepository = workspaceRepository;
   }
-  
+
   async checkWorkspaceOwnership(
     userId: string,
     workspaceId: string
   ): Promise<boolean> {
-    return await this.workspaceRepository.checkWorkspaceOwnership(userId, workspaceId);
+    return await this.workspaceRepository.checkWorkspaceOwnership(
+      userId,
+      workspaceId
+    );
   }
 
-  
   async findWorkspaceById(id: string): Promise<Workspace | null> {
     return await this.workspaceRepository.findById(id);
   }
@@ -47,12 +50,17 @@ export class WorkspaceService implements IWorkspaceService {
     return await this.workspaceRepository.delete(id);
   }
 
-  async addCollaborator(workspaceId: string, collaborators: string[]): Promise<boolean> {
-
+  async addCollaborator(
+    workspaceId: string,
+    collaborators: string[]
+  ): Promise<boolean> {
     return await this.workspaceRepository.addCollaborator(
       workspaceId,
       collaborators
     );
+  }
+  async getCollaborators(workspaceId: string): Promise<Partial<User[]>> {
+    return await this.workspaceRepository.getCollaborators(workspaceId);
   }
 
   async removeCollaborator(

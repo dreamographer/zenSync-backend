@@ -83,6 +83,18 @@ export class WorkspaceController {
     }
   }
 
+  async onGetCollaborators(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { workspaceId } = req.params;
+      const collaborators = await this.workspaceService.getCollaborators(
+        workspaceId
+      );
+      return res.status(200).json(collaborators);
+      
+    } catch (error) {
+      next(error);
+    }
+  }
   async onAddCollaborator(req: Request, res: Response, next: NextFunction) {
     try {
       const { workspaceId } = req.params;

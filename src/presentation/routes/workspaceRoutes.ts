@@ -38,6 +38,11 @@ router.delete(
   workspaceController.onDeleteWorkspace.bind(workspaceController)
 );
 
+// get all collaborators of a workspace
+router.get(
+  "/collaborators/:workspaceId",
+  workspaceController.onGetCollaborators.bind(workspaceController)
+);
 // Add a collaborator to a workspace
 router.post(
   "/collaborators/:workspaceId",

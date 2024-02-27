@@ -1,9 +1,10 @@
+import mongoose from "mongoose";
+import { User } from "../../entities/User";
 import { Workspace } from "../../entities/Workspace";
 import { IWorkspaceRepository } from "../../interfaces/IWorkspaceRepository";
 import { Workspace as WorkspaceModel } from "../models/workspace";
 
 export class WorkspaceRepository implements IWorkspaceRepository {
-
   // Validate workspace with user
   async checkWorkspaceOwnership(
     userId: string,
@@ -17,8 +18,38 @@ export class WorkspaceRepository implements IWorkspaceRepository {
   }
 
 
+  // get collaborators of a workspace
+  async getCollaborators(workspaceId: string): Promise<Partial<User[]>> {
+    try {
+      console.log(workspaceId);
+      
+       const workspace = await WorkspaceModel.aggregate([
+         { $match: { _id: new mongoose.Types.ObjectId(workspaceId) } },
+         { $unwind: "$collaborators" },
+         {
+           $lookup: {
+             from: "users", // The collection to join with
+             localField: "collaborators", // The field from the input documents
+             foreignField: "_id", // The field from the documents of the "from" collection
+             as: "collaborators", // The output array field
+           },
+         },
+         { $project: { collaborators: 1, _id: 0 } },
+         { $unwind: "$collaborators" },
+       ]);
+       
+        return workspace.map(doc => doc.collaborators);
+      return [];
+    } catch (error) {
+      console.error("Error adding collaborator to workspace:", error);
+      return [];
+    }
+  }
   // add new collaborator to the workspace
-  async addCollaborator(workspaceId: string, collaborators: string[]): Promise<boolean> {
+  async addCollaborator(
+    workspaceId: string,
+    collaborators: string[]
+  ): Promise<boolean> {
     try {
       const updatedWorkspace = await WorkspaceModel.findByIdAndUpdate(
         workspaceId,
@@ -62,7 +93,6 @@ export class WorkspaceRepository implements IWorkspaceRepository {
           collaborator.toString()
         ),
         workspaceType: workspace.workspaceType,
-      
       };
       return workspaceData;
     }
@@ -143,7 +173,6 @@ export class WorkspaceRepository implements IWorkspaceRepository {
           collaborator.toString()
         ),
         workspaceType: updatedWorkspace.workspaceType,
-        
       };
     }
     return null;

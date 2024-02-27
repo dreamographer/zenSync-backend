@@ -18,10 +18,10 @@ export class FileRepository implements IFileRepository {
   }
 
   async delete(fileId: string): Promise<void> {
-    await FileModal.findByIdAndDelete(fileId).exec();
+    await FileModal.findByIdAndDelete(fileId);
   }
 
   async findAllFilesInFolder(folderId: string): Promise<File[]> {
-    return FileModal.find({ folderId });
+    return FileModal.find({ folderId },{id:'$_id' , _id:0,title:1,inTrash:1,folderId:1});
   }
 }

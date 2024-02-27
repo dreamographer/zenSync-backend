@@ -1,7 +1,7 @@
 import express from "express";
 import { validateToken } from "../middleware/validateToken"; 
 import { validateRequest } from "../middleware/validateRequest";
-import { fileSchema } from "../validators/fileValidator";
+import { fileSchema, fileUpdateSchema } from "../validators/fileValidator";
 import { FileController } from "../controllers/FileController";
 import { FileRepository } from "../../database/repository/fileRepository";
 import { FileService } from "../../services/fileService";
@@ -30,7 +30,11 @@ router.post("/", validateRequest(fileSchema),fileController.createFile.bind(file
 router.delete("/:fileId", fileController.deleteFile.bind(fileController));
 
 // Route to update a file
-router.put("/:fileId",  validateRequest(fileSchema),fileController.updateFile.bind(fileController));
+router.put(
+  "/:fileId",
+  validateRequest(fileUpdateSchema),
+  fileController.updateFile.bind(fileController)
+);
 
 
 export default router;

@@ -8,5 +8,5 @@ export interface IUserAuth {
   findUserById(email: string): Promise<User | null>;
   generateToken(userId: string): string;
   verifyUser(email: string, token: string): Promise<User | null>;
-  getUsersFromSearch(email: string): Promise<any[]>;
+  getUsersFromSearch(email: string): Promise<User[]>;
 } 

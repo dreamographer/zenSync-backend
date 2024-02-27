@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserAuth } from "../../interfaces/IUserAuth";
 import { IPassportUser } from "../../interfaces/IPassportUser";
+import { File } from "../../entities/File";
+import { User } from "../../entities/User";
 const CLIENT_URL = process.env.CLIENT_URL;
 
 
@@ -81,7 +83,7 @@ export class authController {
   async onLoginUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-      console.log("jdfd");
+    
 
       const user = await this.authService.loginUser(email, password);
 
@@ -138,10 +140,10 @@ export class authController {
   async getUsersFromSearch(req: Request, res: Response): Promise<void> {
     try {
       const { email } = req.query;
-      console.log(email);
       
-      const users = await this.authService.getUsersFromSearch(email as string);
-      res.json(users);
+      const users = await this.authService.getUsersFromSearch(email as string) ;
+
+      res.json(users as User[]);
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ message: "Internal server error" });

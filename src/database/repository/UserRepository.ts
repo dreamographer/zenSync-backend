@@ -22,9 +22,13 @@ export class UserRepository implements IUserRepository {
 
   async getUsersFromSearch(email: string): Promise<any[]> {
     if (!email) return [];
-    const accounts = await UserModel.find({
-      email: { $regex: `^${email}`, $options: "i" },
-    });
+    const accounts = await UserModel.find(
+      {
+        email: { $regex: `^${email}`, $options: "i" },
+        verified: true,
+      },
+      { id: "$_id" , fullname: 1, email: 1, profile: 1,_id:0 }
+    );
     return accounts;
   }
 

@@ -11,6 +11,10 @@ export interface IWorkspaceService {
   findWorkspaceByUser(id: string): Promise<Workspace[] | null>;
   updateWorkspace(id: string, workspaceData: any): Promise<Workspace | null>;
   deleteWorkspace(id: string): Promise<boolean>;
-  addCollaborator(workspaceId: string, collaborators: string[]): Promise<boolean>;
+  addCollaborator(
+    workspaceId: string,
+    collaborators: string[]
+  ): Promise<boolean>;
   removeCollaborator(workspaceId: string, userId: string): Promise<boolean>;
+  getCollaborators(workspaceId: string): Promise<Partial<User[]>>;
 }
