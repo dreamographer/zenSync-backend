@@ -4,7 +4,7 @@ import { FolderController } from "../controllers/FolderController";
 import { FolderService } from "../../services/folderService";
 import { FolderRepository } from "../../database/repository/folderRepository";
 import { validateToken } from "../middleware/validateToken"; 
-import { folderSchema } from "../validators/folderValidator";
+import { folderSchema, folderUpdateSchema } from "../validators/folderValidator";
 import { WorkspaceService } from "../../services/workspaceService";
 import { WorkspaceRepository } from "../../database/repository/workspaceRepository";
 const router = express.Router();
@@ -33,9 +33,9 @@ router.post(
 );
 
 // Update an existing folder
-router.put(
+router.put( 
   "/:id",
-  validateRequest(folderSchema),
+  validateRequest(folderUpdateSchema),
   folderController.updateFolder.bind(folderController)
 );
 

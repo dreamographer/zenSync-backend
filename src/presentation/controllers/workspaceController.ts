@@ -107,7 +107,7 @@ export class WorkspaceController {
       if (added) {
         return res
           .status(200)
-          .json({ message: "Collaborator added successfully" });
+          .json({ message: "Collaborator added successfully",data:added });
       } else {
         return res.status(404).json({ error: "Workspace or user not found" });
       }
@@ -118,16 +118,20 @@ export class WorkspaceController {
 
   async onRemoveCollaborator(req: Request, res: Response, next: NextFunction) {
     try {
-      const { workspaceId, userId } = req.params;
-      const removed =
-        await this.workspaceService.removeCollaborator(
-          workspaceId,
-          userId
-        );
+      const { workspaceId } = req.params;
+      const userIds = req.body.userIds;
+      console.log(userIds);
+      
+      const removed = await this.workspaceService.removeCollaborator(
+        workspaceId,
+        userIds
+      );
+      console.log(removed);
+      
       if (removed) {
         return res
           .status(200)
-          .json({ message: "Collaborator removed successfully" });
+          .json({ message: "Collaborator removed successfully",data:removed });
       } else {
         return res.status(404).json({ error: "Workspace or user not found" });
       }

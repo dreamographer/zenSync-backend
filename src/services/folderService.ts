@@ -3,7 +3,7 @@ import { Folder } from "../entities/Folder";
 import { IFolderRepository } from "../interfaces/IFolderRepository";
 import { IWorkspaceService } from "../interfaces/IWorkspaceService";
 
-export class FolderService implements IFolderService {
+export class FolderService implements IFolderService { 
   private folderRepository: IFolderRepository;
   private workspaceService: IWorkspaceService;
   constructor(

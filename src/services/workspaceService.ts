@@ -53,7 +53,7 @@ export class WorkspaceService implements IWorkspaceService {
   async addCollaborator(
     workspaceId: string,
     collaborators: string[]
-  ): Promise<boolean> {
+  ): Promise<Workspace | null> {
     return await this.workspaceRepository.addCollaborator(
       workspaceId,
       collaborators
@@ -65,11 +65,11 @@ export class WorkspaceService implements IWorkspaceService {
 
   async removeCollaborator(
     workspaceId: string,
-    userId: string
-  ): Promise<boolean> {
+    userIds: string[]
+  ): Promise<Workspace | null> {
     return await this.workspaceRepository.removeCollaborator(
       workspaceId,
-      userId
+      userIds
     );
   }
 }

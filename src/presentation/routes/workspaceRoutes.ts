@@ -51,7 +51,7 @@ router.post(
 
 // Remove a collaborator from a workspace
 router.delete(
-  "/:id/collaborators/:userId",
+  "/:workspaceId/removecollaborators/",
   workspaceController.onRemoveCollaborator.bind(workspaceController)
 );
 

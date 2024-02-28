@@ -16,10 +16,15 @@ export class authController {
     try {
       const body = req.body;
       const existingUser = await this.authService.findUserByEmail(body.email);
+      if(!existingUser?.verified){
+          return res
+            .status(409)
+            .json({ error: "Verification Link Already Send" });
+      }
       if (existingUser) {
         return res
           .status(409)
-          .json({ error: "User Already exits with given email" });
+          .json({ error: "User Already exits with given email " });
       }
       const data = await this.authService.registerUser(body);
       return res.json(data);

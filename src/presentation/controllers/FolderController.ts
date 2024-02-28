@@ -50,9 +50,12 @@ export class FolderController {
         folderId,
         folderData
       );
+
       if (!updatedFolder) {
         return res.status(404).json({ error: "Folder not found" });
       }
+      console.log(updatedFolder);
+      
       res.json(updatedFolder);
     } catch (error) {
       next(error);
@@ -62,6 +65,7 @@ export class FolderController {
   async deleteFolder(req: Request, res: Response, next: NextFunction) {
     try {
       const folderId = req.params.id;
+      
       await this.folderService.deleteFolder(folderId);
       res.sendStatus(204);
     } catch (error) {

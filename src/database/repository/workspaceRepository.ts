@@ -17,28 +17,34 @@ export class WorkspaceRepository implements IWorkspaceRepository {
     return !!workspace;
   }
 
-
   // get collaborators of a workspace
   async getCollaborators(workspaceId: string): Promise<Partial<User[]>> {
     try {
-      console.log(workspaceId);
-      
-       const workspace = await WorkspaceModel.aggregate([
-         { $match: { _id: new mongoose.Types.ObjectId(workspaceId) } },
-         { $unwind: "$collaborators" },
-         {
-           $lookup: {
-             from: "users", // The collection to join with
-             localField: "collaborators", // The field from the input documents
-             foreignField: "_id", // The field from the documents of the "from" collection
-             as: "collaborators", // The output array field
-           },
-         },
-         { $project: { collaborators: 1, _id: 0 } },
-         { $unwind: "$collaborators" },
-       ]);
-       
-        return workspace.map(doc => doc.collaborators);
+      const workspace = await WorkspaceModel.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(workspaceId) } },
+        { $unwind: "$collaborators" },
+        {
+          $lookup: {
+            from: "users",
+            localField: "collaborators",
+            foreignField: "_id",
+            as: "collaborators",
+          },
+        },
+        { $project: { collaborators: 1, _id: 0 } },
+        { $unwind: "$collaborators" },
+        {
+          $project: {
+            id: "$collaborators._id",
+            fullname: "$collaborators.fullname",
+            email: "$collaborators.email",
+            profile: "$collaborators.profile",
+            _id: 0,
+          },
+        },
+      ]);
+
+      return workspace;
       return [];
     } catch (error) {
       console.error("Error adding collaborator to workspace:", error);
@@ -49,35 +55,71 @@ export class WorkspaceRepository implements IWorkspaceRepository {
   async addCollaborator(
     workspaceId: string,
     collaborators: string[]
-  ): Promise<boolean> {
+  ): Promise<Workspace | null> {
     try {
-      const updatedWorkspace = await WorkspaceModel.findByIdAndUpdate(
+      const updatedWorkspace= await WorkspaceModel.findByIdAndUpdate(
         workspaceId,
-        { $addToSet: { collaborators: [...collaborators] } },
+        {
+          $addToSet: { collaborators: [...collaborators] },
+          workspaceType: "shared",
+        },
         { new: true }
       );
-      return !!updatedWorkspace;
+      if (updatedWorkspace) {
+      const workspaceData: Workspace = {
+        id: updatedWorkspace._id.toString(),
+        workspaceOwner: updatedWorkspace.workspaceOwner.toString(),
+        title: updatedWorkspace.title,
+        collaborators: updatedWorkspace.collaborators.map((collaborator: any) =>
+          collaborator.toString()
+        ),
+        workspaceType: updatedWorkspace.workspaceType,
+      };
+      return workspaceData;
+    }
+    return null
     } catch (error) {
       console.error("Error adding collaborator to workspace:", error);
-      return false;
+      return null;
     }
   }
+
 
   //   remove collaborator from workspace
   async removeCollaborator(
     workspaceId: string,
-    userId: string
-  ): Promise<boolean> {
+    userIds: string[]
+  ): Promise<Workspace | null> {
     try {
-      const updatedWorkspace = await WorkspaceModel.findByIdAndUpdate(
+      const objectIds = userIds.map(id => new mongoose.Types.ObjectId(id));
+      let updatedWorkspace= await WorkspaceModel.findByIdAndUpdate(
         workspaceId,
-        { $pull: { collaborators: userId } },
+        { $pull: { collaborators: { $in: objectIds } } },
         { new: true }
       );
-      return !!updatedWorkspace;
+      if (updatedWorkspace?.collaborators.length === 0) {
+        updatedWorkspace=await WorkspaceModel.findOneAndUpdate(
+          { _id: workspaceId, collaborators: { $size: 0 } },
+          { workspaceType: "private" },
+          { new: true }
+        );
+      }
+      if (updatedWorkspace) {
+        const workspaceData: Workspace = {
+          id: updatedWorkspace._id.toString(),
+          workspaceOwner: updatedWorkspace.workspaceOwner.toString(),
+          title: updatedWorkspace.title,
+          collaborators: updatedWorkspace.collaborators.map(
+            (collaborator: any) => collaborator.toString()
+          ),
+          workspaceType: updatedWorkspace.workspaceType,
+        };
+        return workspaceData;
+      }
+      return null
     } catch (error) {
-      console.error("Error removing collaborator from workspace:", error);
-      return false;
+      console.error("Error removing collaborators from workspace:", error);
+      return null;
     }
   }
 

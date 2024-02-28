@@ -7,5 +7,8 @@ export const folderSchema = z.object({
     .regex(/^[0-9a-fA-F]{24}$/, "Invalid workspace ID format"),
 });
 
+export const folderUpdateSchema = z.object({
+  title: z.string().min(1, "Folder title must not be empty"),
+});
 
 
