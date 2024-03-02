@@ -5,6 +5,7 @@ import { IMailer } from "../interfaces/IMailer";
 import { IBcrypt } from "../interfaces/IBcrypt";
 import { IToken } from "../interfaces/IToken";
 import { v4 as uuidv4 } from "uuid";
+import emailTemplate from "../presentation/utils/emailTemplate";
 export class authService implements IUserAuth {
   private repository: IUserRepository;
   private mailer: IMailer;
@@ -65,71 +66,7 @@ export class authService implements IUserAuth {
       return data;
     } else {
       const email = data.email;
-      const html = `<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 24px;
-            margin: 0;
-        }
-
-        .content {
-            margin-bottom: 30px;
-        }
-
-        .content p {
-            margin: 0 0 10px;
-            line-height: 1.5;
-        }
-
-        .footer {
-            text-align: center;
-        }
-
-        .footer p {
-            color: #999;
-            font-size: 14px;
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Greetings, ${data.fullname}</h1>
-        </div>
-        <div class="content">
-        <p>Welcome To <strong>zenSync.</strong></p>
-        <p>Your All-In-One collaboration and productivity platform</p>
-        <p>Verify Your Email and Make your TeamWork Zen</p>
-        <div >
-        <a href=${process.env.SERVER_URL}/auth/verify-email?email=${email}&token=${token}>Verify</a>
-        <div>
-        </div>
-    </div>
-</body>
-</html>`;
+      const html = emailTemplate(data.fullname,email,token);
       this.mailer.SendEmail(email, html);
       return data;
     }
