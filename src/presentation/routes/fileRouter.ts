@@ -36,5 +36,10 @@ router.put(
   fileController.updateFile.bind(fileController)
 );
 
+// move to Trash
+router.patch(
+  "/:fileId",
+  fileController.moveToTrash.bind(fileController)
+);
 
 export default router;

@@ -17,11 +17,24 @@ export class FileRepository implements IFileRepository {
     return updatedFile.toObject() as File;
   }
 
+  // move file to Trash
+  async  moveToTrash(fileId: string): Promise<File | null> {
+    const updatedFile = await FileModal.findByIdAndUpdate(fileId, {inTrash:true}, {
+      new: true,
+    });
+    if (!updatedFile) return null;
+    return updatedFile.toObject() as File;
+  }
+
+
   async delete(fileId: string): Promise<void> {
     await FileModal.findByIdAndDelete(fileId);
   }
 
   async findAllFilesInFolder(folderId: string): Promise<File[]> {
-    return FileModal.find({ folderId },{id:'$_id' , _id:0,title:1,inTrash:1,folderId:1});
+    return FileModal.find(
+      { folderId },
+      { id: "$_id", _id: 0, title: 1, inTrash: 1, folderId: 1 }
+    );
   }
 }

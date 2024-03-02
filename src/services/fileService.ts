@@ -9,6 +9,8 @@ export class FileService implements IFileService {
     this.fileRepository = fileRepository;
     this.folderService=folderService
   }
+
+  
   getFile(fileId: string): Promise<File | null> {
     throw new Error("Method not implemented.");
   }
@@ -32,6 +34,11 @@ export class FileService implements IFileService {
     updates: Partial<File>
   ): Promise<File | null> {
     return this.fileRepository.update(fileId, updates);
+  }
+  async moveToTrash(
+    fileId: string
+  ): Promise<File | null> {
+    return this.fileRepository.moveToTrash(fileId);
   }
 
   async deleteFile(fileId: string): Promise<void> {

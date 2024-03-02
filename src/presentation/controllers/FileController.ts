@@ -56,6 +56,16 @@ export class FileController {
       next(error);
     }
   }
+  async moveToTrash(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { fileId } = req.params;
+      
+      const updatedFile = await this.fileService.moveToTrash(fileId);
+      res.status(200).json(updatedFile);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async deleteFile(req: Request, res: Response, next: NextFunction) {
     try {
