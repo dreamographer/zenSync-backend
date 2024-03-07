@@ -120,13 +120,12 @@ export class WorkspaceController {
     try {
       const { workspaceId } = req.params;
       const userIds = req.body.userIds;
-      console.log(userIds);
+      
       
       const removed = await this.workspaceService.removeCollaborator(
         workspaceId,
         userIds
       );
-      console.log(removed);
       
       if (removed) {
         return res

@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config(); 
 import express from "express";
+import { Server } from "socket.io";
 import { connectToDatabase } from "./database/connection";
 import cors from "cors";
 import session from "express-session";
@@ -11,7 +12,18 @@ import workspaceRouter from './presentation/routes/workspaceRoutes'
 import folderRouter from "./presentation/routes/folderRoutes";
 import fileRouter from "./presentation/routes/fileRouter";
 import { errorHandler } from './presentation/middleware/errorHandler';
-const app = express();     
+import ioMiddleware from './presentation/middleware/socketIo';
+const app = express(); 
+// socket
+const httpServer = require("http").createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+    credentials: true,
+    exposedHeaders: ["set-cookie"],
+  },
+});
+
 app.use(express.json());
 app.use(
   session({
@@ -38,12 +50,23 @@ if (!mongoUri) {
 }
 connectToDatabase(mongoUri)
   .then(() => {  
+    io.on("connection", socket => {
+      console.log("a user connected");
+
+      // Example: Emit data to the client
+      socket.emit("data", { message: "Hello from server!" });
+
+      socket.on("disconnect", () => {
+        console.log("user disconnected");
+      });
+    });
+    app.use(ioMiddleware(io));
     app.use("/auth", authRouter);
     app.use("/workspace", workspaceRouter);
     app.use("/folder", folderRouter);
     app.use("/file", fileRouter);
     app.use(errorHandler)
-    app.listen(port, () => {
+    httpServer.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
   })

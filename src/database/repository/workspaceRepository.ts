@@ -144,10 +144,11 @@ export class WorkspaceRepository implements IWorkspaceRepository {
   // find workspace by title
   async findAllByUser(owner: string): Promise<Workspace[] | null> {
     const workspaces = await WorkspaceModel.find({
-      workspaceOwner: owner,
+      $or: [{ workspaceOwner: owner }, { collaborators: { $in: [owner] } }],
     });
 
     if (workspaces && workspaces.length > 0) {
+      
       const workspaceData: Workspace[] = workspaces.map(workspace => ({
         id: workspace._id.toString(),
         workspaceOwner: workspace.workspaceOwner.toString(),

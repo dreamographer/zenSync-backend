@@ -22,14 +22,13 @@ export class FileController {
   async getAllFilesInFolder(req: Request, res: Response, next: NextFunction) {
     try {
       const { folderId } = req.params;
-      console.log(folderId);
       
       const files = await this.fileService.findAllFilesInFolder(folderId);
       res.status(200).json(files);
     } catch (error) {
       next(error);
     }
-  }
+  } 
 
   async getFile(req: Request, res: Response, next: NextFunction) {
     try {
@@ -48,7 +47,6 @@ export class FileController {
     try {
       const { fileId } = req.params;
       const updates = req.body;
-      console.log(updates);
       
       const updatedFile = await this.fileService.updateFile(fileId, updates);
       res.status(200).json(updatedFile);

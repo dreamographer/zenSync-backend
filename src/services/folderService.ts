@@ -31,7 +31,7 @@ async getFolderById(folderId: string): Promise<Folder | null> {
 
     // get all folders of workspace
   async getAllFolders(WorkspaceId: string): Promise<Folder[]> {
-
+    
     return this.folderRepository.findAllByWorkspaceId(WorkspaceId);
   }
 

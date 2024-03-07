@@ -20,16 +20,19 @@ const fileService = new FileService(fileRepository, folderService);
 const fileController = new FileController(fileService);
 router.use(validateToken);
 
-// Route to get all the all files of a folder
+// get all the all files of a folder
 router.get("/folder/:folderId", fileController.getAllFilesInFolder.bind(fileController));
 
-// Route to create a new file
+// Get data of the FIle
+router.get("/:fileId", fileController.getFile.bind(fileController));
+
+// create a new file
 router.post("/", validateRequest(fileSchema),fileController.createFile.bind(fileController));
 
-// Route to delete a file
+// delete a file
 router.delete("/:fileId", fileController.deleteFile.bind(fileController));
 
-// Route to update a file
+// update a file
 router.put(
   "/:fileId",
   validateRequest(fileUpdateSchema),

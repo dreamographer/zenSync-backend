@@ -128,7 +128,7 @@ export class authController {
     try {
       const userId = req.user as string;
       const user = await this.authService.findUserById(userId);
-      console.log("the user");
+    
 
       let data = {
         id: user?.id,

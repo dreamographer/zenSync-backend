@@ -18,14 +18,17 @@ export class FileRepository implements IFileRepository {
   }
 
   // move file to Trash
-  async  moveToTrash(fileId: string): Promise<File | null> {
-    const updatedFile = await FileModal.findByIdAndUpdate(fileId, {inTrash:true}, {
-      new: true,
-    });
+  async moveToTrash(fileId: string): Promise<File | null> {
+    const updatedFile = await FileModal.findByIdAndUpdate(
+      fileId,
+      { inTrash: true },
+      {
+        new: true,
+      }
+    );
     if (!updatedFile) return null;
     return updatedFile.toObject() as File;
   }
-
 
   async delete(fileId: string): Promise<void> {
     await FileModal.findByIdAndDelete(fileId);
@@ -36,5 +39,16 @@ export class FileRepository implements IFileRepository {
       { folderId },
       { id: "$_id", _id: 0, title: 1, inTrash: 1, folderId: 1 }
     );
+  }
+
+
+  async findById(fileId: string): Promise<File|null> {
+    return FileModal.findById(fileId, {
+      id: "$_id",
+      _id: 0,
+      title: 1,
+      inTrash: 1,
+      folderId: 1,
+    });
   }
 }

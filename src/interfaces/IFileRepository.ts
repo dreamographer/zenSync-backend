@@ -7,4 +7,5 @@ export interface IFileRepository {
   moveToTrash(fileId: string): Promise<File | null>;
   delete(fileId: string): Promise<void>;
   findAllFilesInFolder(folderId: string): Promise<File[]>;
+  findById(fileId: string): Promise<File | null>;
 }

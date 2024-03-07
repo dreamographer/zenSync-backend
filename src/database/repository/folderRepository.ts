@@ -7,7 +7,6 @@ export class FolderRepository implements IFolderRepository {
   async findAllByWorkspaceId(workspaceId: string): Promise<Folder[]> {
     const folders = await folderModel.find({ workspaceId: workspaceId });
   
-     console.log("folder find req");
      
     return folders.map(folder => ({
       id: folder.id,
@@ -48,8 +47,6 @@ export class FolderRepository implements IFolderRepository {
       { new: true }
     );
     if (!updatedFolder) return null;
-    console.log(updatedFolder);
-    
     return {
       id: updatedFolder._id.toString(),
       title: updatedFolder.title,
@@ -60,7 +57,7 @@ export class FolderRepository implements IFolderRepository {
 
   async delete(folderId: string): Promise<void> {
     let res= await folderModel.deleteOne({ _id: folderId });
-    console.log(res);
+  
     
   }
 }

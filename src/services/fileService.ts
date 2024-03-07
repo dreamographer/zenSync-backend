@@ -9,10 +9,9 @@ export class FileService implements IFileService {
     this.fileRepository = fileRepository;
     this.folderService=folderService
   }
-
   
   getFile(fileId: string): Promise<File | null> {
-    throw new Error("Method not implemented.");
+    return this.fileRepository.findById(fileId)
   }
 
   async findAllFilesInFolder(folderId: string): Promise<File[]> {

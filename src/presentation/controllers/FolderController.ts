@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { IFolderService } from "../../interfaces/IFolderService";
+import { Server } from "socket.io";
 
 export class FolderController {
   private folderService: IFolderService;
@@ -10,8 +11,12 @@ export class FolderController {
 
   async getAllFolders(req: Request, res: Response, next: NextFunction) {
     try {
-      const folderId = req.params.workspaceId;
-      const folders = await this.folderService.getAllFolders(folderId);
+      const workspaceId = req.params.workspaceId;
+      if(workspaceId=="undefined"){
+        return res.status(404).json({ error: "NO Workspace Id" });
+      }
+      
+      const folders = await this.folderService.getAllFolders(workspaceId);
       res.json(folders);
     } catch (error) {
       next(error);
@@ -36,6 +41,8 @@ export class FolderController {
       const userId = req.user as string;
       const folderData = req.body;
       const folder = await this.folderService.createFolder(userId, folderData);
+      const io: Server = req.io as Server;
+      io.emit("folderCreated", folder);
       res.status(201).json(folder);
     } catch (error) {
       next(error);
@@ -54,7 +61,6 @@ export class FolderController {
       if (!updatedFolder) {
         return res.status(404).json({ error: "Folder not found" });
       }
-      console.log(updatedFolder);
       
       res.json(updatedFolder);
     } catch (error) {
