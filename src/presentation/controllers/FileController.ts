@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { IFileService } from "../../interfaces/IFileService";
+import { Server } from "socket.io";
 
 export class FileController {
   private fileService: IFileService;
 
   constructor(fileService: IFileService) {
-    this.fileService = fileService;
+    this.fileService = fileService; 
   }
   
   async createFile(req: Request, res: Response, next: NextFunction) {
@@ -13,6 +14,8 @@ export class FileController {
       const fileData = req.body
       const userId=req.user as string
       const newFile = await this.fileService.createFile(userId, fileData);
+      const io: Server = req.io as Server;
+      io.emit("fileCreated", newFile);
       res.status(201).json(newFile);
     } catch (error) {
       next(error);

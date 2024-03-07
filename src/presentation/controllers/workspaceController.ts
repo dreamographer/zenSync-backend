@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { IWorkspaceService } from "../../interfaces/IWorkspaceService";
 import { User } from "../../entities/User";
+import { Server } from "socket.io";
 
 
 export class WorkspaceController {
@@ -12,9 +13,24 @@ export class WorkspaceController {
 
   async onFindUserWorkspace(req: Request, res: Response, next: NextFunction) {
     try {
-      const workspace = await this.workspaceService.findWorkspaceByUser(
-        req.user as string
-      );
+      const userId = req.user as string;
+     const io: Server = req.io as Server;
+
+      io.on("workspaceUpdated", async createdWorkspace => {
+        console.log('sockei  req',userId);
+        if (createdWorkspace.workspaceOwner === userId) {
+          const workspace = await this.workspaceService.findWorkspaceByUser(
+            userId
+          );
+          console.log('sockei  req',workspace);
+          
+          if (workspace) {
+            io.to(userId).emit("userWorkspacesUpdated", workspace);
+          }
+        }
+      });
+      const workspace = await this.workspaceService.findWorkspaceByUser(userId);
+      
       if (workspace) {
         return res.status(200).json(workspace);
       } else {
@@ -44,6 +60,8 @@ export class WorkspaceController {
       const createdWorkspace = await this.workspaceService.createWorkspace(
         workspaceData
       );
+       const io: Server = req.io as Server;
+       io.emit("workspaceUpdated", createdWorkspace);
 
       return res.status(201).json(createdWorkspace);
     } catch (error) {
@@ -95,6 +113,7 @@ export class WorkspaceController {
       next(error);
     }
   }
+
   async onAddCollaborator(req: Request, res: Response, next: NextFunction) {
     try {
       const { workspaceId } = req.params;
