@@ -57,7 +57,8 @@ export class FolderController {
         folderId,
         folderData
       );
-
+        const io: Server = req.io as Server;
+        io.emit("folderUpdated", updatedFolder);
       if (!updatedFolder) {
         return res.status(404).json({ error: "Folder not found" });
       }

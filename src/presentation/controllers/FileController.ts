@@ -52,6 +52,8 @@ export class FileController {
       const updates = req.body;
       
       const updatedFile = await this.fileService.updateFile(fileId, updates);
+      const io: Server = req.io as Server;
+      io.emit("fileUpdated", updatedFile);
       res.status(200).json(updatedFile);
     } catch (error) {
       next(error);

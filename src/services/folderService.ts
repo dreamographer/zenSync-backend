@@ -24,7 +24,7 @@ async getFolderById(folderId: string): Promise<Folder | null> {
     ): Promise<Folder> {
       let validWorkspace=await this.workspaceService.checkWorkspaceOwnership(userId,folderData.workspaceId as string)
       if(!validWorkspace){
-        throw new Error("Workspace Invalid");
+        throw new Error("No permission To create");
       }
       return this.folderRepository.create(folderData);
     }
