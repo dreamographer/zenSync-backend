@@ -7,11 +7,11 @@ export class FileService implements IFileService {
   private folderService: IFolderService;
   constructor(fileRepository: IFileRepository, folderService: IFolderService) {
     this.fileRepository = fileRepository;
-    this.folderService=folderService
+    this.folderService = folderService;
   }
-  
+
   getFile(fileId: string): Promise<File | null> {
-    return this.fileRepository.findById(fileId)
+    return this.fileRepository.findById(fileId);
   }
 
   async findAllFilesInFolder(folderId: string): Promise<File[]> {
@@ -19,13 +19,29 @@ export class FileService implements IFileService {
   }
 
   async createFile(userId: string, fileData: Partial<File>): Promise<File> {
-    let validFolder= await this.folderService.getFolderById(fileData.folderId as string)
+    let validFolder = await this.folderService.getFolderById(
+      fileData.folderId as string
+    );
     console.log(validFolder);
-    
-    if(!validFolder){
-        throw new Error("Not a Valid Folder");
+
+    if (!validFolder) {
+      throw new Error("Not a Valid Folder");
     }
     return this.fileRepository.create(fileData);
+  }
+
+  async updateContent(fileId: string, updates: string): Promise<File | null> {
+    try {
+      const updatedFile = await this.fileRepository.updateContent(
+        fileId,
+        updates
+      );
+
+      return updatedFile;
+    } catch (error) {
+      console.error("Error updating file content:", error);
+      return null;
+    }
   }
 
   async updateFile(
@@ -34,10 +50,17 @@ export class FileService implements IFileService {
   ): Promise<File | null> {
     return this.fileRepository.update(fileId, updates);
   }
-  async moveToTrash(
-    fileId: string
-  ): Promise<File | null> {
+
+  async moveToTrash(fileId: string): Promise<File | null> {
     return this.fileRepository.moveToTrash(fileId);
+  }
+
+  async getAllFilesInTrash(): Promise<File[]> {
+    return await this.fileRepository.getAllFilesInTrash();
+  }
+
+  async restoreFile(fileId: string): Promise<File | null> {
+    return await this.fileRepository.restoreFile(fileId);
   }
 
   async deleteFile(fileId: string): Promise<void> {

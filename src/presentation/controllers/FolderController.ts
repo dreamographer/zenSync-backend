@@ -72,7 +72,6 @@ export class FolderController {
   async deleteFolder(req: Request, res: Response, next: NextFunction) {
     try {
       const folderId = req.params.id;
-      
       await this.folderService.deleteFolder(folderId);
       res.sendStatus(204);
     } catch (error) {

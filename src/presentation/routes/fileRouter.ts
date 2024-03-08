@@ -11,14 +11,21 @@ import { WorkspaceService } from "../../services/workspaceService";
 import { FolderService } from "../../services/folderService";
 
 const router = express.Router();
-const fileRepository=new FileRepository()
-const folderRepository = new FolderRepository();
 const workspaceRepository = new WorkspaceRepository();
 const workspaceService = new WorkspaceService(workspaceRepository);
+const folderRepository = new FolderRepository();
+const fileRepository=new FileRepository()
 const folderService = new FolderService(folderRepository, workspaceService);
 const fileService = new FileService(fileRepository, folderService);
 const fileController = new FileController(fileService);
+
 router.use(validateToken);
+  
+router.get("/trash/", fileController.getAllFilesInTrash.bind(fileController));
+
+router.patch("/trash/:fileId", fileController.restoreFile.bind(fileController));
+
+
 
 // get all the all files of a folder
 router.get("/folder/:folderId", fileController.getAllFilesInFolder.bind(fileController));
@@ -44,5 +51,6 @@ router.patch(
   "/:fileId",
   fileController.moveToTrash.bind(fileController)
 );
+
 
 export default router;

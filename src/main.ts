@@ -13,7 +13,22 @@ import folderRouter from "./presentation/routes/folderRoutes";
 import fileRouter from "./presentation/routes/fileRouter";
 import { errorHandler } from "./presentation/middleware/errorHandler";
 import ioMiddleware from "./presentation/middleware/socketIo";
+import { SocketService } from "./services/socketService";
+import { FileService } from "./services/fileService";
+import { FolderRepository } from "./database/repository/folderRepository";
+import { FileRepository } from "./database/repository/fileRepository";
+import { FolderService } from "./services/folderService";
+import { WorkspaceService } from "./services/workspaceService";
+import { WorkspaceRepository } from "./database/repository/workspaceRepository";
 const app = express();
+
+  const folderRepository = new FolderRepository();
+  const fileRepository = new FileRepository();
+  const workspaceRepository = new WorkspaceRepository();
+  const workspaceService = new WorkspaceService(workspaceRepository);
+  const folderService = new FolderService(folderRepository, workspaceService);
+  const fileService = new FileService(fileRepository, folderService);
+  const socketService = new SocketService(fileService);
 // socket
 const httpServer = require("http").createServer(app);
 const io = new Server(httpServer, {
@@ -48,16 +63,21 @@ const mongoUri = process.env.MONGO_URI;
 if (!mongoUri) {
   throw new Error("Environment variable MONGO_URI is not set");
 }
+
+  
 connectToDatabase(mongoUri)
   .then(() => {
-    io.on("connection", socket => {
-      console.log("a user connected");
+  
 
+    io.on("connection", socket => {
+      console.log("a user connected"); 
       socket.on("disconnect", () => {
         console.log("user disconnected");
       });
+      socketService.handleConnection(socket)
+      
     });
-  
+      
     app.use(ioMiddleware(io));
     app.use("/auth", authRouter);
     app.use("/workspace", workspaceRouter);
