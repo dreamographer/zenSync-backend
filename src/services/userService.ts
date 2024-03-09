@@ -30,6 +30,11 @@ export class authService implements IUserAuth {
     return this.repository.getUsersFromSearch(email);
   }
 
+  async updateUsername(userId: string, newUsername: string): Promise<User | null> {
+    const data = { fullname: newUsername };
+    return await this.repository.update(userId, data);
+  }
+
   findUserByEmail(email: string): Promise<User | null> {
     const user = this.repository.findByEmail(email);
     return user;
@@ -66,7 +71,7 @@ export class authService implements IUserAuth {
       return data;
     } else {
       const email = data.email;
-      const html = emailTemplate(data.fullname,email,token);
+      const html = emailTemplate(data.fullname, email, token);
       this.mailer.SendEmail(email, html);
       return data;
     }

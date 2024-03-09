@@ -33,7 +33,7 @@ export class UserRepository implements IUserRepository {
   }
 
 
-
+  
   async findByEmail(email: string): Promise<User | null> {
     const User = await UserModel.findOne({ email: email });
     if (User) {
@@ -51,9 +51,9 @@ export class UserRepository implements IUserRepository {
     return null;
   }
 
-  async update(email: string, data: any): Promise<User | null> {
+  async update(id: string, data: any): Promise<User | null> {
     const updatedUser = await UserModel.findOneAndUpdate(
-      { email: email },
+      { _id: id },
       { $set: data },
       { new: true }
     );
@@ -70,6 +70,8 @@ export class UserRepository implements IUserRepository {
     }
     return null;
   }
+
+  
   async deleteUnverifiedAccounts(): Promise<void> {
     const fifteenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
     const unverifiedAccounts = await UserModel.find({

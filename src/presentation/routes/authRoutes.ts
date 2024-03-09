@@ -24,6 +24,7 @@ router.post(
   controller.onRegisterUser.bind(controller)
 );
 router.post("/login", controller.onLoginUser.bind(controller));
+router.put("/:userId", controller.updateUsername.bind(controller));
 router.get("/logout", controller.onUserLogout.bind(controller));
 router.get("/verify-email", controller.onVerifyUser.bind(controller));
 router.get("/google", passport.authenticate("google", { scope: ["profile"] }));
@@ -35,7 +36,6 @@ router.get(
   }),
   controller.handlePassportCallback.bind(controller)
 );
-
 router.get(
   "/github/callback",
   passport.authenticate("github", {

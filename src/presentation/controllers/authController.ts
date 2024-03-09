@@ -16,13 +16,13 @@ export class authController {
     try {
       const body = req.body;
       const existingUser = await this.authService.findUserByEmail(body.email);
-    
+
       if (existingUser) {
-          if (!existingUser.verified) {
-            return res
-              .status(409)
-              .json({ error: "Verification Link Already Send" });
-          }
+        if (!existingUser.verified) {
+          return res
+            .status(409)
+            .json({ error: "Verification Link Already Send" });
+        }
         return res
           .status(409)
           .json({ error: "User Already exits with given email " });
@@ -89,7 +89,6 @@ export class authController {
   async onLoginUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
-    
 
       const user = await this.authService.loginUser(email, password);
 
@@ -112,6 +111,19 @@ export class authController {
       console.log(error);
     }
   }
+
+  async updateUsername(req: Request, res: Response) {
+    try {
+      const userId = req.params.userId;
+      const newUsername = req.body.fullname;
+      const updatedUser=await this.authService.updateUsername(userId, newUsername);
+      return res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("Error updating username:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+
   async onUserLogout(req: Request, res: Response, next: NextFunction) {
     try {
       res.cookie("jwt", "", {
@@ -128,7 +140,6 @@ export class authController {
     try {
       const userId = req.user as string;
       const user = await this.authService.findUserById(userId);
-    
 
       let data = {
         id: user?.id,
@@ -146,8 +157,8 @@ export class authController {
   async getUsersFromSearch(req: Request, res: Response): Promise<void> {
     try {
       const { email } = req.query;
-      
-      const users = await this.authService.getUsersFromSearch(email as string) ;
+
+      const users = await this.authService.getUsersFromSearch(email as string);
 
       res.json(users as User[]);
     } catch (error) {
