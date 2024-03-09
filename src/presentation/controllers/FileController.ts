@@ -66,6 +66,7 @@ export class FileController {
       const updatedFile = await this.fileService.moveToTrash(fileId);
       const io: Server = req.io as Server;
       io.emit("fileUpdated", updatedFile);
+      io.emit("addToTrash",updatedFile);
       res.status(200).json(updatedFile);
     } catch (error) {
       next(error);
@@ -87,7 +88,7 @@ export class FileController {
     try {
       const io: Server = req.io as Server;
       const fileId = req.params.fileId;
-
+      
       const updatedFile = await this.fileService.restoreFile(fileId);
       io.emit("fileUpdated", updatedFile);
       io.emit("removedTrash",updatedFile);
@@ -97,11 +98,14 @@ export class FileController {
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
-
+  
   async deleteFile(req: Request, res: Response, next: NextFunction) {
     try {
+      const io: Server = req.io as Server;
       const { fileId } = req.params;
       await this.fileService.deleteFile(fileId);
+      const update = { id: fileId };
+      io.emit("removedTrash", fileId);
       res.status(204).end();
     } catch (error) {
       next(error);
