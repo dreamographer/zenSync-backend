@@ -23,12 +23,12 @@ async getFolderById(folderId: string): Promise<Folder | null> {
     folderData: Partial<Folder>
     ): Promise<Folder> {
       let validWorkspace=await this.workspaceService.checkWorkspaceOwnership(userId,folderData.workspaceId as string)
-      if(!validWorkspace){
-        throw new Error("No permission To create");
+      if(!validWorkspace){ //check for permission
+        throw new Error("No permission To create"); 
       }
       return this.folderRepository.create(folderData);
     }
-
+ 
     // get all folders of workspace
   async getAllFolders(WorkspaceId: string): Promise<Folder[]> {
     

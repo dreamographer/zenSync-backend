@@ -146,9 +146,7 @@ export class WorkspaceRepository implements IWorkspaceRepository {
     const workspaces = await WorkspaceModel.find({
       $or: [{ workspaceOwner: owner }, { collaborators: { $in: [owner] } }],
     });
-
     if (workspaces && workspaces.length > 0) {
-      
       const workspaceData: Workspace[] = workspaces.map(workspace => ({
         id: workspace._id.toString(),
         workspaceOwner: workspace.workspaceOwner.toString(),

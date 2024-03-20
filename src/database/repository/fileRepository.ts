@@ -81,6 +81,7 @@ export class FileRepository implements IFileRepository {
       title: 1,
       inTrash: 1,
       folderId: 1,
+      coverImage:1
     });
   }
 }

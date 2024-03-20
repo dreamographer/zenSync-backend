@@ -4,7 +4,7 @@ import { IFileService } from "../interfaces/IFileService";
 export class SocketService {
   private FileService: IFileService;
 
-  constructor(dataService: IFileService) {
+  constructor(dataService: IFileService) { 
     this.FileService = dataService;
   }
 

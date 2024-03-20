@@ -23,9 +23,7 @@ router.use(validateToken);
   
 router.get("/trash/", fileController.getAllFilesInTrash.bind(fileController));
 
-router.patch("/trash/:fileId", fileController.restoreFile.bind(fileController));
-
-
+router.patch("/trash/:fileId", fileController.restoreFile.bind(fileController)); 
 
 // get all the all files of a folder
 router.get("/folder/:folderId", fileController.getAllFilesInFolder.bind(fileController));
