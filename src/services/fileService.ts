@@ -66,4 +66,11 @@ export class FileService implements IFileService {
   async deleteFile(fileId: string): Promise<void> {
     await this.fileRepository.delete(fileId);
   }
+  async updateIsPublished(
+    fileId: string,
+    isPublished: boolean
+  ): Promise<File | null> {
+    return await this.fileRepository.updateIsPublished(fileId, isPublished);
+  
+  }
 }

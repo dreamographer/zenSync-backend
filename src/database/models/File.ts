@@ -4,13 +4,14 @@ const FileSchema = new Schema(
   {
     title: { type: String, required: true },
     inTrash: { type: Boolean, default: false },
-    content:{type:String},
-    coverImage:{type:String},
+    content: { type: String },
+    coverImage: { type: String },
     folderId: {
       type: Schema.Types.ObjectId,
       ref: "Folder",
       required: true,
     },
+    isPublished: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

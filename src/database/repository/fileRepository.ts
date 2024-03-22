@@ -51,15 +51,15 @@ export class FileRepository implements IFileRepository {
   }
 
   async restoreFile(fileId: string): Promise<File | null> {
-        const updatedFile = await FileModal.findByIdAndUpdate(
-          fileId,
-          { inTrash: false },
-          {
-            new: true,
-          }
-        );
-        if (!updatedFile) return null;
-        return updatedFile.toObject() as File;
+    const updatedFile = await FileModal.findByIdAndUpdate(
+      fileId,
+      { inTrash: false },
+      {
+        new: true,
+      }
+    );
+    if (!updatedFile) return null;
+    return updatedFile.toObject() as File;
   }
 
   // permenent delete
@@ -81,7 +81,27 @@ export class FileRepository implements IFileRepository {
       title: 1,
       inTrash: 1,
       folderId: 1,
-      coverImage:1
+      coverImage: 1,
+      isPublished: 1,
+      content: 1,
     });
+  }
+
+  async updateIsPublished(
+    fileId: string,
+    isPublished: boolean
+  ): Promise<File | null> {
+    try {
+      const updatedFile = await FileModal.findByIdAndUpdate(
+        fileId,
+        { isPublished },
+        { new: true }
+      );
+        if (!updatedFile) return null;
+      return updatedFile.toObject() as File;
+    } catch (error) {
+      console.error("Error updating isPublished in repository:", error);
+      throw error;
+    }
   }
 }

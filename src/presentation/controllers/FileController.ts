@@ -50,7 +50,7 @@ export class FileController {
     try {
       const { fileId } = req.params;
       const updates = req.body;
-      console.log(updates)
+      console.log(updates);
       const updatedFile = await this.fileService.updateFile(fileId, updates);
       const io: Server = req.io as Server;
       io.emit("fileUpdated", updatedFile);
@@ -66,7 +66,7 @@ export class FileController {
       const updatedFile = await this.fileService.moveToTrash(fileId);
       const io: Server = req.io as Server;
       io.emit("fileUpdated", updatedFile);
-      io.emit("addToTrash",updatedFile);
+      io.emit("addToTrash", updatedFile);
       res.status(200).json(updatedFile);
     } catch (error) {
       next(error);
@@ -88,17 +88,17 @@ export class FileController {
     try {
       const io: Server = req.io as Server;
       const fileId = req.params.fileId;
-      
+
       const updatedFile = await this.fileService.restoreFile(fileId);
       io.emit("fileUpdated", updatedFile);
-      io.emit("removedTrash",updatedFile);
+      io.emit("removedTrash", updatedFile);
       return res.status(200).json(updatedFile);
     } catch (error) {
       console.error("Error restoring file:", error);
       res.status(500).json({ error: "Internal Server Error" });
     }
   }
-  
+
   async deleteFile(req: Request, res: Response, next: NextFunction) {
     try {
       const io: Server = req.io as Server;
@@ -109,6 +109,22 @@ export class FileController {
       res.status(204).end();
     } catch (error) {
       next(error);
+    }
+  }
+
+  async updateIsPublished(req: Request, res: Response) {
+    try {
+      const fileId = req.params.fileId;
+      const isPublished = req.body.isPublished;
+      const updatedFile = await this.fileService.updateIsPublished(
+        fileId,
+        isPublished
+      );
+
+      res.status(200).json(updatedFile);
+    } catch (error) {
+      console.error("Error updating isPublished:", error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 }

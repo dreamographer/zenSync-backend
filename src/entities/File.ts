@@ -3,5 +3,6 @@ export interface File {
   title: string;
   folderId: string;
   in_trash: boolean;
-  coverImage?:string;
+  coverImage?: string;
+  isPublished:boolean;
 }

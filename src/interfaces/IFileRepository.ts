@@ -11,4 +11,5 @@ export interface IFileRepository {
   findById(fileId: string): Promise<File | null>;
   getAllFilesInTrash(): Promise<File[]>;
   restoreFile(fileId: string): Promise<File | null>;
+  updateIsPublished(fileId: string, isPublished: boolean): Promise<File | null>;
 }

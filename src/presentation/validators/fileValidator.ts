@@ -9,4 +9,5 @@ export const fileSchema = z.object({
 export const fileUpdateSchema = z.object({
   title: z.string().min(1, "File title must not be empty").optional(),
   coverImage: z.string().optional(),
+  isPublished: z.boolean().optional(),
 });

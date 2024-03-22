@@ -10,5 +10,6 @@ export interface IFileService {
   findAllFilesInFolder(folderId: string): Promise<File[]>;
   getAllFilesInTrash(): Promise<File[]>;
   restoreFile(fileId: string): Promise<File | null>;
+  updateIsPublished(fileId: string, isPublished: boolean): Promise<File | null>;
 }
 

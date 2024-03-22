@@ -19,6 +19,9 @@ const folderService = new FolderService(folderRepository, workspaceService);
 const fileService = new FileService(fileRepository, folderService);
 const fileController = new FileController(fileService);
 
+// Get data of the FIle
+router.get("/:fileId", fileController.getFile.bind(fileController));
+
 router.use(validateToken);
   
 router.get("/trash/", fileController.getAllFilesInTrash.bind(fileController));
@@ -28,8 +31,6 @@ router.patch("/trash/:fileId", fileController.restoreFile.bind(fileController));
 // get all the all files of a folder
 router.get("/folder/:folderId", fileController.getAllFilesInFolder.bind(fileController));
 
-// Get data of the FIle
-router.get("/:fileId", fileController.getFile.bind(fileController));
 
 // create a new file
 router.post("/", validateRequest(fileSchema),fileController.createFile.bind(fileController));
@@ -48,6 +49,12 @@ router.put(
 router.patch(
   "/:fileId",
   fileController.moveToTrash.bind(fileController)
+);
+
+router.put(
+  "/:fileId/publish",
+  validateRequest(fileUpdateSchema),
+  fileController.updateIsPublished.bind(fileController)
 );
 
 
