@@ -9,7 +9,7 @@ export interface IFileRepository {
   delete(fileId: string): Promise<void>;
   findAllFilesInFolder(folderId: string): Promise<File[]>;
   findById(fileId: string): Promise<File | null>;
-  getAllFilesInTrash(): Promise<File[]>;
+  getAllFilesInTrash(): Promise<File[]|[]>;
   restoreFile(fileId: string): Promise<File | null>;
   updateIsPublished(fileId: string, isPublished: boolean): Promise<File | null>;
 }

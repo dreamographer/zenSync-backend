@@ -7,7 +7,7 @@ export class FileService implements IFileService {
   private folderService: IFolderService;
   constructor(fileRepository: IFileRepository, folderService: IFolderService) {
     this.fileRepository = fileRepository;
-    this.folderService = folderService;
+    this.folderService = folderService; 
   }
 
   getFile(fileId: string): Promise<File | null> {

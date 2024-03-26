@@ -19,12 +19,10 @@ const folderService = new FolderService(folderRepository, workspaceService);
 const fileService = new FileService(fileRepository, folderService);
 const fileController = new FileController(fileService);
 
-// Get data of the FIle
-router.get("/:fileId", fileController.getFile.bind(fileController));
 
-router.use(validateToken);
+router.use(validateToken); 
   
-router.get("/trash/", fileController.getAllFilesInTrash.bind(fileController));
+router.get("/trash", fileController.getAllFilesInTrash.bind(fileController));
 
 router.patch("/trash/:fileId", fileController.restoreFile.bind(fileController)); 
 
@@ -57,5 +55,7 @@ router.put(
   fileController.updateIsPublished.bind(fileController)
 );
 
+// Get data of the FIle
+router.get("/:fileId", fileController.getFile.bind(fileController));
 
 export default router;

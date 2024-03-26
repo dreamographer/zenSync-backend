@@ -43,7 +43,7 @@ export class FileRepository implements IFileRepository {
     return updatedFile.toObject() as File;
   }
 
-  async getAllFilesInTrash(): Promise<File[]> {
+  async getAllFilesInTrash(): Promise<File[]|[]> {
     return await FileModal.find(
       { inTrash: true },
       { id: "$_id", _id: 0, title: 1, inTrash: 1, folderId: 1 }
@@ -74,7 +74,7 @@ export class FileRepository implements IFileRepository {
     );
   }
 
-  async findById(fileId: string): Promise<File | null> {
+  async findById(fileId: string): Promise<File | null> { 
     return FileModal.findById(fileId, {
       id: "$_id",
       _id: 0,

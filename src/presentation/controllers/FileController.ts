@@ -73,18 +73,17 @@ export class FileController {
     }
   }
 
-  async getAllFilesInTrash(req: Request, res: Response) {
+  async getAllFilesInTrash(req: Request, res: Response, next: NextFunction) {
     try {
       const filesInTrash = await this.fileService.getAllFilesInTrash();
 
       res.json(filesInTrash);
     } catch (error) {
-      console.error("Error getting files from trash:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      next(error);
     }
   }
 
-  async restoreFile(req: Request, res: Response) {
+  async restoreFile(req: Request, res: Response, next: NextFunction) {
     try {
       const io: Server = req.io as Server;
       const fileId = req.params.fileId;
@@ -94,8 +93,7 @@ export class FileController {
       io.emit("removedTrash", updatedFile);
       return res.status(200).json(updatedFile);
     } catch (error) {
-      console.error("Error restoring file:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      next(error);
     }
   }
 
@@ -104,7 +102,6 @@ export class FileController {
       const io: Server = req.io as Server;
       const { fileId } = req.params;
       await this.fileService.deleteFile(fileId);
-      const update = { id: fileId };
       io.emit("removedTrash", fileId);
       res.status(204).end();
     } catch (error) {
@@ -112,19 +109,19 @@ export class FileController {
     }
   }
 
-  async updateIsPublished(req: Request, res: Response) {
+  async updateIsPublished(req: Request, res: Response, next: NextFunction) {
     try {
       const fileId = req.params.fileId;
       const isPublished = req.body.isPublished;
+      const io: Server = req.io as Server;
       const updatedFile = await this.fileService.updateIsPublished(
         fileId,
         isPublished
       );
-
-      res.status(200).json(updatedFile);
+      io.emit("fileUpdated", updatedFile);
+      return res.status(200).json(updatedFile);
     } catch (error) {
-      console.error("Error updating isPublished:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+      next(error);
     }
   }
 }

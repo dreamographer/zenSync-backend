@@ -9,7 +9,7 @@ export class SocketService {
   }
 
   handleConnection(socket: Socket): void {
-    console.log("a user connected inside");
+    console.log("a user connected ");
 
     socket.on("disconnect", () => {
       console.log("user disconnected");
