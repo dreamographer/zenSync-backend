@@ -20,6 +20,7 @@ const fileService = new FileService(fileRepository, folderService);
 const fileController = new FileController(fileService);
 
 
+router.get("/public/:fileId", fileController.getFile.bind(fileController));
 router.use(validateToken); 
   
 router.get("/trash", fileController.getAllFilesInTrash.bind(fileController));
