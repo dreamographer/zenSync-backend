@@ -1,8 +1,8 @@
 // src/infrastructure/database.ts
 import mongoose from "mongoose";
-const url = process.env.MONGO_URI;
+const url = process.env.MONGO_URL;
 if (!url) {
-  throw new Error("Environment variable MONGO_URI is not set");
+  throw new Error("Environment variable MONGO_URL is not set");
 }
 
 export const connectToDatabase = async (): Promise<void> => {
