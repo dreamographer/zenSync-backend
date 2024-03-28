@@ -52,7 +52,7 @@ export class FileController {
       const updates = req.body;
       console.log(updates);
       const updatedFile = await this.fileService.updateFile(fileId, updates);
-      const io: Server = req.io as Server;
+      const io: Server = (req as any).io as Server;
       io.emit("fileUpdated", updatedFile);
       res.status(200).json(updatedFile);
     } catch (error) {
@@ -64,7 +64,7 @@ export class FileController {
       const { fileId } = req.params;
 
       const updatedFile = await this.fileService.moveToTrash(fileId);
-      const io: Server = req.io as Server;
+      const io: Server = (req as any).io as Server;
       io.emit("fileUpdated", updatedFile);
       io.emit("addToTrash", updatedFile);
       res.status(200).json(updatedFile);
@@ -85,7 +85,7 @@ export class FileController {
 
   async restoreFile(req: Request, res: Response, next: NextFunction) {
     try {
-      const io: Server = req.io as Server;
+      const io: Server = (req as any).io as Server;
       const fileId = req.params.fileId;
 
       const updatedFile = await this.fileService.restoreFile(fileId);
@@ -99,7 +99,7 @@ export class FileController {
 
   async deleteFile(req: Request, res: Response, next: NextFunction) {
     try {
-      const io: Server = req.io as Server;
+      const io: Server = (req as any).io as Server;
       const { fileId } = req.params;
       await this.fileService.deleteFile(fileId);
       io.emit("removedTrash", fileId);
@@ -113,7 +113,7 @@ export class FileController {
     try {
       const fileId = req.params.fileId;
       const isPublished = req.body.isPublished;
-      const io: Server = req.io as Server;
+      const io: Server = (req as any).io as Server;
       const updatedFile = await this.fileService.updateIsPublished(
         fileId,
         isPublished

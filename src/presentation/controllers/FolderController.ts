@@ -41,7 +41,7 @@ export class FolderController {
       const userId = req.user as string;
       const folderData = req.body;
       const folder = await this.folderService.createFolder(userId, folderData);
-      const io: Server = req.io as Server;
+      const io: Server = (req as any).io as Server;
       io.emit("folderCreated", folder);
       res.status(201).json(folder);
     } catch (error) {
@@ -57,7 +57,7 @@ export class FolderController {
         folderId,
         folderData
       );
-        const io: Server = req.io as Server;
+        const io: Server = (req as any).io as Server;
         io.emit("folderUpdated", updatedFolder);
       if (!updatedFolder) {
         return res.status(404).json({ error: "Folder not found" });
