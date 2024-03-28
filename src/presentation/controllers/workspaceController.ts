@@ -14,7 +14,12 @@ export class WorkspaceController {
   async onFindUserWorkspace(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user as string;
-     const io: Server = req.io as Server;
+     const io: Server<
+        DefaultEventsMap,
+        DefaultEventsMap,
+        DefaultEventsMap,
+        any
+      >= req.io as Server;
 
       io.on("workspaceUpdated", async createdWorkspace => {
         console.log('sockei  req',userId);
@@ -60,7 +65,12 @@ export class WorkspaceController {
       const createdWorkspace = await this.workspaceService.createWorkspace(
         workspaceData
       );
-       const io: Server = req.io as Server;
+       const io: Server<
+        DefaultEventsMap,
+        DefaultEventsMap,
+        DefaultEventsMap,
+        any
+      >= req.io as Server;
        io.emit("workspaceUpdated", createdWorkspace);
 
       return res.status(201).json(createdWorkspace);
