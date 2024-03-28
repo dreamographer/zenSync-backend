@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { IFileService } from "../../interfaces/IFileService";
 import { Server } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 export class FileController {
   private fileService: IFileService;
@@ -14,7 +15,12 @@ export class FileController {
       const fileData = req.body;
       const userId = req.user as string;
       const newFile = await this.fileService.createFile(userId, fileData);
-      const io: Server = req.io as Server;
+      const io: Server<
+        DefaultEventsMap,
+        DefaultEventsMap,
+        DefaultEventsMap,
+        any
+      > = req.io as Server;
       io.emit("fileCreated", newFile);
       res.status(201).json(newFile);
     } catch (error) {
