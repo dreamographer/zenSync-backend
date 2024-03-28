@@ -59,13 +59,7 @@ app.use(express.static("src/public"));
 app.use(passport.initialize());
 const port = process.env.PORT || 5000;
 
-const mongoUri = process.env.MONGO_URI;
-if (!mongoUri) {
-  throw new Error("Environment variable MONGO_URI is not set");
-}
-
-  
-connectToDatabase(mongoUri)
+connectToDatabase()
   .then(() => {
   
 

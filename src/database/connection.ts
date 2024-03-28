@@ -1,9 +1,13 @@
 // src/infrastructure/database.ts
 import mongoose from "mongoose";
+const url = process.env.MONGO_URI;
+if (!url) {
+  throw new Error("Environment variable MONGO_URI is not set");
+}
 
-export const connectToDatabase = async (uri: string): Promise<void> => {
+export const connectToDatabase = async (): Promise<void> => {
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(url);
     console.log("Connected to MongoDB");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
