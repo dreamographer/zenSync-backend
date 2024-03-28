@@ -1,0 +1,26 @@
+name: Deploy node Application
+on:
+  push:
+    branches:
+      - main
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Login to docker hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build Docker Image
+        run: docker build -t dreamographer/zensync . 
+      - name: Publish Image to docker hub
+        run: docker push dreamographer/zensync:latest
+  deploy:
+    needs: build 
+    runs-on: self-hosted 
+    steps: 
+      - name: Pull image from docker hub
+        run: docker pull dreamographer/zensync:latest
+      - name: Run Docker Container
+        run: docker run -d -p 5000:5000 --name nodejs-app-container -e MONGO_URL='${{ secrets.MONGO_URL }}' -e JWT_SECRET='${{ secrets.JWT_SECRET }}' -e GOOGLE_CLIENT_ID='${{ secrets.GOOGLE_CLIENT_ID }}' -e GOOGLE_CLIENT_SECRET='${{ secrets.GOOGLE_CLIENT_SECRET }}' -e GITHUB_CLIENT_ID='${{ secrets.GITHUB_CLIENT_ID }}' -e GITHUB_CLIENT_SECRET='${{ secrets.GITHUB_CLIENT_SECRET }}' -e SESSION_SECRET='${{ secrets.SESSION_SECRET }}' -e CLIENT_URL='${{ secrets.CLIENT_URL }}' -e SERVER_URL='${{ secrets.SERVER_URL }}' -e SMTP_KEY='${{ secrets.SMTP_KEY }}'
