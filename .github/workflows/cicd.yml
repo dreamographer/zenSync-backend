@@ -23,7 +23,7 @@ jobs:
       - name: Pull image from Docker Hub
         run: docker pull dreamographer/zensync:latest
       - name: Delete old container
-        run: docker rm -f nodejs-app-container  
+        run: docker rm -f backend-container  
       - name: Run Docker Container
         run: |
           docker run -d -p 5000:5000 --name backend-container \
