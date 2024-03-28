@@ -3,8 +3,8 @@ import passport from "passport";
 import { Profile } from "passport";
 import { VerifyCallback } from "passport-oauth2";
 
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+const GITHUB_CLIENT_ID = process.env.MY_GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.MY_GITHUB_CLIENT_SECRET;
 const SERVER_URL = process.env.SERVER_URL;
 if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
   throw new Error("Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET");
