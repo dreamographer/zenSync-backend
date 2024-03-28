@@ -14,7 +14,7 @@ export class FileController {
       const fileData = req.body;
       const userId = req.user as string;
       const newFile = await this.fileService.createFile(userId, fileData);
-      const io: Server = req.io as Server;
+      const io: Server = (req as any).io as Server;
       io.emit("fileCreated", newFile);
       res.status(201).json(newFile);
     } catch (error) {
