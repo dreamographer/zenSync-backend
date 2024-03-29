@@ -20,6 +20,7 @@ import { FileRepository } from "./database/repository/fileRepository";
 import { FolderService } from "./services/folderService";
 import { WorkspaceService } from "./services/workspaceService";
 import { WorkspaceRepository } from "./database/repository/workspaceRepository";
+const CLIENT_URL = process.env.CLIENT_URL;
 const app = express();
 
   const folderRepository = new FolderRepository();
@@ -33,7 +34,7 @@ const app = express();
 const httpServer = require("http").createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: `${CLIENT_URL}`,
     credentials: true,
     exposedHeaders: ["set-cookie"],
   },
@@ -50,7 +51,7 @@ app.use(
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${CLIENT_URL}`,
     credentials: true,
     exposedHeaders: ["set-cookie"],
   })

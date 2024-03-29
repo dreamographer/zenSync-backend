@@ -1,5 +1,10 @@
-export default function emailTemplate(fullname:string,email:string,token:string){
-    return `<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+const CLIENT_URL = process.env.CLIENT_URL;
+export default function emailTemplate(
+  fullname: string,
+  email: string,
+  token: string
+) {
+  return `<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 
 <head>
@@ -134,7 +139,7 @@ export default function emailTemplate(fullname:string,email:string,token:string)
                               <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                 <tr>
                                   <td style="padding-right: 0px;padding-left: 0px;" align="center">
-                                    <a href="http://localhost:3000" target="_blank">
+                                    <a href="${CLIENT_URL}" target="_blank">
                                       <img align="center" border="0" src="https://assets.unlayer.com/projects/219948/1709274354222-zensync-horizontal.png" alt="ZensyncLogo" title="ZensyncLogo" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 34%;max-width: 197.2px;"
                                         width="197.2" />
                                     </a>

@@ -1,4 +1,4 @@
-type UserProfile ={
+type UserProfile = {
   sub: string;
   name: string;
   given_name: string;
@@ -7,7 +7,7 @@ type UserProfile ={
   email: string;
   email_verified: boolean;
   locale: string;
-}
+};
 
 export interface IPassportUser {
   id: string;
