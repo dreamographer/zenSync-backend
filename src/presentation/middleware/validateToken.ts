@@ -1,25 +1,40 @@
-import { NextFunction, Response,Request } from "express";
+import { NextFunction, Response, Request } from "express";
 import { Token } from "../../external-libraries/Token";
 
 const tokenService = new Token();
 //JWT Token Validation
-export const validateToken=( 
+export const validateToken = (
   req: Request,
   res: Response,
   next: NextFunction
-): void | Response=> { 
+): void | Response => {
   try {
-      const authHeader = req.headers.authorization;
-      const token = authHeader?authHeader?.split(" ")[1]:req.cookies.jwt
-    
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
-    const decodedToken = tokenService.verifyToken(token);
-    req.user = decodedToken.userId; 
-    next(); 
+    const authHeader = req.headers.authorization;
+    const token = authHeader ? authHeader?.split(" ")[1] : req.cookies.jwt;
+    const refreshToken = authHeader
+      ? authHeader?.split(" ")[3]
+      : req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token provided" });
+    }
+    if (!token) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+    const decodedToken = tokenService.verifyRefreshToken(refreshToken);
+    const userId = decodedToken.userId;
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      tokenService.generateTokens(userId);
+
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+
+    req.user = userId;
+    next();
   } catch (error) {
-    
-    return res.status(403).json({ message: "Failed to authenticate token " });
+    return res.status(403).json({ message: "Failed to refresh token" });
   }
-}
+};

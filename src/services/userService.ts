@@ -22,15 +22,21 @@ export class authService implements IUserAuth {
     this.bcrypt = bcrypt;
     this.token = token;
   }
-  generateToken(userId: string): string {
-    return this.token.generateToken(userId);
+  generateToken(userId: string): {
+    accessToken: string;
+    refreshToken: string;
+  } {
+    return this.token.generateTokens(userId);
   }
 
   async getUsersFromSearch(email: string): Promise<any[]> {
     return this.repository.getUsersFromSearch(email);
   }
 
-  async updateUsername(userId: string, newUsername: string): Promise<User | null> {
+  async updateUsername(
+    userId: string,
+    newUsername: string
+  ): Promise<User | null> {
     const data = { fullname: newUsername };
     return await this.repository.update(userId, data);
   }

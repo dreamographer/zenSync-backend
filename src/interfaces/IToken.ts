@@ -1,4 +1,8 @@
 export interface IToken {
-  generateToken(userId: string): string;
-  verifyToken(token: string): any;
+  generateTokens(userId: string): {
+    accessToken: string;
+    refreshToken: string;
+  };
+  verifyAccessToken(token: string): any;
+  verifyRefreshToken(token: string): any;
 }

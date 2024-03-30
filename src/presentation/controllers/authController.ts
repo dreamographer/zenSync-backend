@@ -93,12 +93,19 @@ export class authController {
       const user = await this.authService.loginUser(email, password);
 
       if (user?.id) {
-        const token = this.authService.generateToken(user.id);
-        if (token) {
-          res.cookie("jwt", token, {
+        const { accessToken, refreshToken } = this.authService.generateToken(
+          user.id
+        );
+        if (accessToken && refreshToken) {
+          res.cookie("jwt", accessToken, {
             httpOnly: true,
             secure: true,
-            maxAge: 24 * 60 * 60 * 1000,
+            maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
+          });
+          res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000, // Refresh token expires in 24 hours
           });
           return res.status(200).json({ message: "Sign-in successful", user });
         } else {
@@ -127,6 +134,10 @@ export class authController {
   async onUserLogout(req: Request, res: Response, next: NextFunction) {
     try {
       res.cookie("jwt", "", {
+        httpOnly: true,
+        expires: new Date(0),
+      });
+      res.cookie("refreshToken", "", {
         httpOnly: true,
         expires: new Date(0),
       });
