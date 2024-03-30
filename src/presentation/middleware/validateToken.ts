@@ -26,7 +26,7 @@ export const validateToken = (
     const { accessToken, refreshToken: newRefreshToken } =
       tokenService.generateTokens(userId);
 
-    res.cookie("refreshToken", newRefreshToken, {
+    res.cookie("jwt", accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
