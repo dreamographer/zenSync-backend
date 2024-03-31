@@ -59,11 +59,13 @@ export class authController {
         if (token) {
           res.cookie("jwt", token.accessToken, {
             httpOnly: true,
+            sameSite: "none",
             secure: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
           res.cookie("refreshToken", token.refreshToken, {
             httpOnly: true,
+            sameSite: "none",
             secure: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
           });
@@ -104,11 +106,13 @@ export class authController {
         if (accessToken && refreshToken) {
           res.cookie("jwt", accessToken, {
             httpOnly: true,
+            sameSite:"none",
             secure: true,
             maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
           });
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
+              sameSite:"none",
             secure: true,
             maxAge: 24 * 60 * 60 * 1000, // Refresh token expires in 24 hours
           });
@@ -140,10 +144,12 @@ export class authController {
     try {
       res.cookie("jwt", "", {
         httpOnly: true,
+        sameSite: "none",
         expires: new Date(0),
       });
       res.cookie("refreshToken", "", {
         httpOnly: true,
+        sameSite: "none",
         expires: new Date(0),
       });
       return res.status(200).json({ message: "Logged out successfully" });

@@ -29,6 +29,7 @@ export const validateToken = (
     res.cookie("jwt", accessToken, {
       httpOnly: true,
       secure: true,
+      sameSite: "none",
     });
 
     req.user = userId;
