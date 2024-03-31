@@ -106,14 +106,16 @@ export class authController {
         if (accessToken && refreshToken) {
           res.cookie("jwt", accessToken, {
             httpOnly: true,
-            sameSite:"none",
             secure: true,
+            domain: CLIENT_URL,
+            path: "/",
             maxAge: 15 * 60 * 1000, // Access token expires in 15 minutes
           });
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-              sameSite:"none",
             secure: true,
+            domain: CLIENT_URL,
+            path: "/",
             maxAge: 24 * 60 * 60 * 1000, // Refresh token expires in 24 hours
           });
           return res.status(200).json({ message: "Sign-in successful", user });
@@ -144,8 +146,9 @@ export class authController {
     try {
       res.cookie("jwt", "", {
         httpOnly: true,
-        sameSite: "none",
         expires: new Date(0),
+        domain: CLIENT_URL ,
+      
       });
       res.cookie("refreshToken", "", {
         httpOnly: true,
