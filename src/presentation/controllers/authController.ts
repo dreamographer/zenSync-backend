@@ -57,7 +57,12 @@ export class authController {
           }
         }
         if (token) {
-          res.cookie("jwt", token, {
+          res.cookie("jwt", token.accessToken, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+          });
+          res.cookie("refreshToken", token.refreshToken, {
             httpOnly: true,
             secure: true,
             maxAge: 30 * 24 * 60 * 60 * 1000,
