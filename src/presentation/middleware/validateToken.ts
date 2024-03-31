@@ -10,10 +10,14 @@ export const validateToken = (
 ): void | Response => {
   try {
     const authHeader = req.headers.authorization;
+    console.log("cookies",req.cookies);
+    
     const token = authHeader ? authHeader?.split(" ")[1] : req.cookies.jwt;
     const refreshToken = authHeader
       ? authHeader?.split(" ")[3]
       : req.cookies.refreshToken;
+      console.log(token,refreshToken);
+      
     if (!refreshToken) {
       return res.status(401).json({ message: "No refresh token provided" });
     }

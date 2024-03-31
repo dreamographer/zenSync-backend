@@ -6,6 +6,7 @@ import { WorkspaceRepository } from "../../database/repository/workspaceReposito
 import { validateToken } from "../middleware/validateToken";
 import { workspaceSchema } from "../validators/workspaceValidator";
 const router = express.Router();
+
 const workspaceRepository = new WorkspaceRepository();
 const workspaceService = new WorkspaceService(workspaceRepository);
 const workspaceController = new WorkspaceController(workspaceService);

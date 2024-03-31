@@ -22,6 +22,7 @@ import { WorkspaceService } from "./services/workspaceService";
 import { WorkspaceRepository } from "./database/repository/workspaceRepository";
 const CLIENT_URL = process.env.CLIENT_URL;
 const app = express();
+app.use(cookieParser());
 
   const folderRepository = new FolderRepository();
   const fileRepository = new FileRepository();
@@ -48,7 +49,6 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(cookieParser());
 app.use(
   cors({
     origin: `${CLIENT_URL}`,
