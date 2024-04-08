@@ -22,7 +22,6 @@ export class FileService implements IFileService {
     let validFolder = await this.folderService.getFolderById(
       fileData.folderId as string
     );
-    console.log(validFolder);
 
     if (!validFolder) {
       throw new Error("Not a Valid Folder");

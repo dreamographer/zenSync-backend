@@ -5,7 +5,7 @@ const ioMiddleware = (io: Server) => {
   return (req: Request, res: Response, next: NextFunction) => {
     (req as any).io = io;
     next();
-  };
+  }; 
 };
 
 export default ioMiddleware;

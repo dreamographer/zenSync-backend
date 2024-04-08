@@ -17,12 +17,11 @@ export class WorkspaceController {
      const io: Server = (req as any).io as Server;
 
       io.on("workspaceUpdated", async createdWorkspace => {
-        console.log('sockei  req',userId);
+    
         if (createdWorkspace.workspaceOwner === userId) {
           const workspace = await this.workspaceService.findWorkspaceByUser(
             userId
           );
-          console.log('sockei  req',workspace);
           
           if (workspace) {
             io.to(userId).emit("userWorkspacesUpdated", workspace);

@@ -50,7 +50,6 @@ export class FileController {
     try {
       const { fileId } = req.params;
       const updates = req.body;
-      console.log(updates);
       const updatedFile = await this.fileService.updateFile(fileId, updates);
       const io: Server = (req as any).io as Server;
       io.emit("fileUpdated", updatedFile);
