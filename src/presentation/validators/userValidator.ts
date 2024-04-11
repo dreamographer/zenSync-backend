@@ -7,7 +7,7 @@ export const userSchema = z.object({
   password: z
     .string()
     .min(8, "Password must have at least 8 characters with alphanumber combination")
-    .refine(password => /[A-Za-z][0-9]/.test(password), {
-      message: "Password must contain at least one letter",
+    .refine(password => /[A-Za-z]/.test(password), {
+      message: "Password must contain at least one letter and number",
     })
 });

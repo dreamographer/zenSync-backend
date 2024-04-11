@@ -82,15 +82,19 @@ export class authController {
     try {
       const token = req.query.token as string;
       const email = req.query.email as string;
-      const result = await this.authService.verifyUser(email, token);
-      if (result) {
-        res.redirect(`${CLIENT_URL}/verify-email?token=${token}`);
-      } else {
-        const error = "Invalid token";
-        res.redirect(`${CLIENT_URL}/verify-email?error=${error}`);
+      let result 
+      if(token&&email){
+        result = await this.authService.verifyUser(email, token);
       }
+        if (result) {
+          res.redirect(`${CLIENT_URL}/verify-email?token=${token}`);
+        } else {
+          const error = "Invalid token";
+          res.redirect(`${CLIENT_URL}/verify-email?error=${error}`);
+        }
     } catch (error) {
       console.log(error);
+      next(error)
     }
   }
   async onLoginUser(req: Request, res: Response, next: NextFunction) {

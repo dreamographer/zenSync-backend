@@ -51,13 +51,12 @@ export class authService implements IUserAuth {
   }
   async verifyUser(email: string, token: string): Promise<User | null> {
     const user = await this.findUserByEmail(email);
-
     if (user) {
       if (user.verify_token === token) {
         const data = {
           verified: true,
         };
-        const update = await this.repository.update(email, data);
+        const update = await this.repository.update(user.id, data);
         if (update) {
           return update;
         }
@@ -88,7 +87,7 @@ export class authService implements IUserAuth {
     if (!user) {
       return null;
     }
-    if (user.password) {
+    if (user.password &&user.verified) {
       const isPasswordCorrect = await this.bcrypt.compare(
         password,
         user.password
