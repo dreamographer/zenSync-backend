@@ -5,5 +5,7 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   findById(email: string): Promise<User | null>;
   update(id: string, data: any): Promise<User | null>;
-  getUsersFromSearch(email: string): Promise<any[]>;
+  getUsersFromSearch(email: string, includeDemo?: boolean): Promise<any[]>;
+  findExpiredDemoUserIds(before: Date): Promise<string[]>;
+  deleteByIds(ids: string[]): Promise<number>;
 }

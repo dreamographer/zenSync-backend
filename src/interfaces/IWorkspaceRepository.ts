@@ -21,4 +21,6 @@ export interface IWorkspaceRepository {
     workspaceId: string,
     userIds: string[]
   ): Promise<Workspace | null>;
+  findIdsByOwners(ownerIds: string[]): Promise<string[]>;
+  deleteByOwners(ownerIds: string[]): Promise<number>;
 }

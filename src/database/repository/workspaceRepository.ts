@@ -224,4 +224,22 @@ export class WorkspaceRepository implements IWorkspaceRepository {
     const deletedWorkspace = await WorkspaceModel.deleteOne({ _id: id });
     return deletedWorkspace.deletedCount !== 0;
   }
+
+  // demo cleanup: all workspaces belonging to the given owners
+  async findIdsByOwners(ownerIds: string[]): Promise<string[]> {
+    if (!ownerIds.length) return [];
+    const workspaces = await WorkspaceModel.find(
+      { workspaceOwner: { $in: ownerIds } },
+      { _id: 1 }
+    );
+    return workspaces.map(workspace => workspace._id.toString());
+  }
+
+  async deleteByOwners(ownerIds: string[]): Promise<number> {
+    if (!ownerIds.length) return 0;
+    const result = await WorkspaceModel.deleteMany({
+      workspaceOwner: { $in: ownerIds },
+    });
+    return result.deletedCount || 0;
+  }
 }

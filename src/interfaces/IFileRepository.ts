@@ -12,4 +12,5 @@ export interface IFileRepository {
   getAllFilesInTrash(): Promise<File[]|[]>;
   restoreFile(fileId: string): Promise<File | null>;
   updateIsPublished(fileId: string, isPublished: boolean): Promise<File | null>;
+  deleteByFolders(folderIds: string[]): Promise<number>;
 }

@@ -29,8 +29,11 @@ export class authService implements IUserAuth {
     return this.token.generateTokens(userId);
   }
 
-  async getUsersFromSearch(email: string): Promise<any[]> {
-    return this.repository.getUsersFromSearch(email);
+  async getUsersFromSearch(
+    email: string,
+    includeDemo: boolean = false
+  ): Promise<any[]> {
+    return this.repository.getUsersFromSearch(email, includeDemo);
   }
 
   async updateUsername(

@@ -173,6 +173,7 @@ export class authController {
         email: user?.email,
         verified: user?.verified,
         profile: user?.profile,
+        isDemo: user?.isDemo ?? false,
       };
       return res.json(data);
     } catch (error) {
@@ -184,7 +185,17 @@ export class authController {
     try {
       const { email } = req.query;
 
-      const users = await this.authService.getUsersFromSearch(email as string);
+      // demo users may search each other so collaboration is testable,
+      // real users never see demo accounts in their results
+      const requesterId = req.user as string;
+      const requester = requesterId
+        ? await this.authService.findUserById(requesterId)
+        : null;
+
+      const users = await this.authService.getUsersFromSearch(
+        email as string,
+        requester?.isDemo === true
+      );
 
       res.json(users as User[]);
     } catch (error) {

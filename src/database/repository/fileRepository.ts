@@ -104,4 +104,13 @@ export class FileRepository implements IFileRepository {
       throw error;
     }
   }
+
+  // demo cleanup: all files inside the given folders
+  async deleteByFolders(folderIds: string[]): Promise<number> {
+    if (!folderIds.length) return 0;
+    const result = await FileModal.deleteMany({
+      folderId: { $in: folderIds },
+    });
+    return result.deletedCount || 0;
+  }
 }

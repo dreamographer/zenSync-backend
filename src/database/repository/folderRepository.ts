@@ -60,4 +60,22 @@ export class FolderRepository implements IFolderRepository {
   
     
   }
+
+  // demo cleanup: all folders inside the given workspaces
+  async findIdsByWorkspaces(workspaceIds: string[]): Promise<string[]> {
+    if (!workspaceIds.length) return [];
+    const folders = await folderModel.find(
+      { workspaceId: { $in: workspaceIds } },
+      { _id: 1 }
+    );
+    return folders.map(folder => folder._id.toString());
+  }
+
+  async deleteByWorkspaces(workspaceIds: string[]): Promise<number> {
+    if (!workspaceIds.length) return 0;
+    const result = await folderModel.deleteMany({
+      workspaceId: { $in: workspaceIds },
+    });
+    return result.deletedCount || 0;
+  }
 }

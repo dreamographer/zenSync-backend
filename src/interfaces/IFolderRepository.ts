@@ -6,4 +6,6 @@ export interface IFolderRepository {
   create(folderData: Partial<Folder>): Promise<Folder>;
   update(folderId: string, folderData: Partial<Folder>): Promise<Folder | null>;
   delete(folderId: string): Promise<void>;
+  findIdsByWorkspaces(workspaceIds: string[]): Promise<string[]>;
+  deleteByWorkspaces(workspaceIds: string[]): Promise<number>;
 }

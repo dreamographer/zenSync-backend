@@ -6,4 +6,5 @@ export interface User {
   profile?: string;
   verify_token: string; 
   verified:boolean;
+  isDemo?:boolean;
 }

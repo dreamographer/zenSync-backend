@@ -14,22 +14,50 @@ export class UserRepository implements IUserRepository {
         profile: User.profile || undefined,
         verify_token: User.verify_token,
         verified: User.verified,
+        isDemo: User.isDemo || false,
       };
       return userData;
     }
     return null;
   }
 
-  async getUsersFromSearch(email: string): Promise<any[]> {
+  async getUsersFromSearch(
+    email: string,
+    includeDemo: boolean = false
+  ): Promise<any[]> {
     if (!email) return [];
-    const accounts = await UserModel.find(
-      {
-        email: { $regex: `^${email}`, $options: "i" },
-        verified: true,
-      },
-      { id: "$_id" , fullname: 1, email: 1, profile: 1,_id:0 }
-    );
+    const filter: Record<string, unknown> = {
+      email: { $regex: `^${email}`, $options: "i" },
+      verified: true,
+    };
+    // demo accounts are throwaway noise for real users, but demo users
+    // still need to find each other to try out collaboration
+    if (!includeDemo) {
+      filter.isDemo = { $ne: true };
+    }
+    const accounts = await UserModel.find(filter, {
+      id: "$_id",
+      fullname: 1,
+      email: 1,
+      profile: 1,
+      _id: 0,
+    });
     return accounts;
+  }
+
+  // demo accounts expire, this finds the ones past their lifetime
+  async findExpiredDemoUserIds(before: Date): Promise<string[]> {
+    const expired = await UserModel.find(
+      { isDemo: true, createdAt: { $lt: before } },
+      { _id: 1 }
+    );
+    return expired.map(user => user._id.toString());
+  }
+
+  async deleteByIds(ids: string[]): Promise<number> {
+    if (!ids.length) return 0;
+    const result = await UserModel.deleteMany({ _id: { $in: ids } });
+    return result.deletedCount || 0;
   }
 
 
@@ -45,6 +73,7 @@ export class UserRepository implements IUserRepository {
         profile: User.profile || undefined,
         verify_token: User.verify_token,
         verified: User.verified,
+        isDemo: User.isDemo || false,
       };
       return userData;
     }
@@ -66,6 +95,7 @@ export class UserRepository implements IUserRepository {
         profile: updatedUser.profile || undefined,
         verify_token: updatedUser.verify_token,
         verified: updatedUser.verified,
+        isDemo: updatedUser.isDemo || false,
       };
     }
     return null;
@@ -94,6 +124,7 @@ export class UserRepository implements IUserRepository {
       profile: newUserDocument.profile || undefined,
       verify_token: newUserDocument.verify_token,
       verified: newUserDocument.verified,
+      isDemo: newUserDocument.isDemo || false,
     };
     return newUser;
   }

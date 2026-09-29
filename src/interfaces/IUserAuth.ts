@@ -11,6 +11,6 @@ export interface IUserAuth {
     refreshToken: string;
   };
   verifyUser(email: string, token: string): Promise<User | null>;
-  getUsersFromSearch(email: string): Promise<User[]>;
+  getUsersFromSearch(email: string, includeDemo?: boolean): Promise<User[]>;
   updateUsername(userId: string, newUsername: string): Promise<User | null>;
 } 
